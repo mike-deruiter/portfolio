@@ -1,0 +1,7 @@
+Routing Protocols
+@@Link-State Protocol
+Makes routers trade records like, "Router X is adjacent to Router Y & the link is up." A complete set of such records forms a connectivity map of the network.
+@@Distance-Vector Protocol
+Makes hosts broadcast their routing information; they announce how far they think they are from the networks they know about & others either mark them as the best gateway or ignore them. Over time, everyone's routing information is supposed to converge.
+@@Exterior Protocol
+Protocol for routing among autonomous systems; must often handle routes for many networks & deal gracefully w/ the fact neighboring routers are under other people's control.

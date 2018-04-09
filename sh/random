@@ -1,0 +1,31 @@
+#!/bin/sh 
+
+# random
+# Returns a random line from 1 or more files.
+
+set -eu
+
+PROGNAME=$(echo $0 | sed 's#^.*/##')
+
+show_usage() {
+    echo $1
+    echo "Usage: $PROGNAME FILE"
+    exit ${2:-1}
+}
+
+if [ $# -lt 1 ]; then
+    show_usage "$PROGNAME: 1 or more arguments required. You supplied $#."
+elif [ ! -f $1 ]; then
+    show_usage "$PROGNAME: $1 not a file." 2
+fi
+
+for i in "$@"
+do
+    NUM_LINES=$(cat $1 | wc -l)
+    RAND_LENGTH=$(echo "$(echo $NUM_LINES | wc -c) - 1" | bc)
+
+    random=$(cat /dev/urandom | tr -dc '0-9' | fold -w $RAND_LENGTH | head -n 1)
+    line=$(echo "($random % $NUM_LINES) + 1" | bc)
+
+    awk 'NR == ('$line') { print; }' $i
+done

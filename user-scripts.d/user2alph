@@ -1,0 +1,55 @@
+#!/usr/bin/ruby
+
+# user2alph
+# Changes all usernames that have a number at the end to have letters at the 
+# end, so that 1 ... 26 become _A ... _B, 27 ... 52 become AA ... AZ, etc.
+#   ex: test01 -> test_A
+#       test02 -> test_B
+#       test27 -> testAA
+#       test28 -> testAB
+
+
+passwd = File.open("/etc/passwd", "r")
+
+names = Array.new
+
+passwd.each do |line|
+    fields = line.split(":")
+    
+    if (fields[2].to_i >= 1000 && fields[0] =~ /[0-9]$/)
+        names.push fields[0]
+    end
+end
+
+names.each do |name|
+    name =~ /([0-9]+)$/
+    
+    alpha = Array.new
+    i = $1.to_i
+    
+    while (i > 0)
+        alpha.push ('A'.ord + (i - 1) % 26).chr
+        
+        if (i % 26 == 0)
+            i -= 26
+        end
+        
+        i /= 26
+    end
+    
+    if ($1.to_i == 0)
+        alpha.push 'a'
+    end
+    
+    if ($2.to_i < 26)
+        alpha.push '_'     
+    end
+    
+    alpha.reverse!
+    
+    newname = $` + alpha.join('')
+    
+    system("usermod -l #{newname} #{name}")
+    system("usermod -d /home/#{newname} -m #{newname}")
+    system("groupmod -n #{newname} #{name}")
+end

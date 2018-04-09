@@ -1,0 +1,145 @@
+#!/bin/bash
+#TODO: Allow multiline answers
+
+# study - Command-line flashcard program written in sh. A deck of flashcards
+# in a pre-defined location & format is specified (specifying multiple decks is
+# permitted); the deck is shuffled & questions are shown, revealing the answers
+# after a prompt & querying whether the user knew it or not. At the end, the
+# questions the user got wrong are shown again & a percentage is displayed.
+
+set -eu
+
+PROGNAME=$(echo $0 | sed s#^.*/##)
+FLASHCARD_DIR=$HOME/Documents/Flashcards
+
+# pick - adapted from THE UNIX PROGRAMMING ENVIRONMENT
+#        by Brian Kernighan & Rob Pike
+pick() {
+    for i in "$@"
+    do
+        echo -n "$i (y/n)? " >/dev/tty
+        read response
+        case $response in
+            y*) echo $i        ;;
+            n*)                ;;
+            *)  echo error     ;;
+        esac
+    done </dev/tty
+}
+
+if [ $# -lt 1 ]; then
+    echo "$PROGNAME: Please specify flashcard set to study." 1>&2
+    exit 1
+fi
+
+# gather all the files containing cards to study
+files=""
+for i in $@; do
+    if [ ! -e $FLASHCARD_DIR/$i ]; then
+        echo "$PROGNAME: Flashcards not found." 1>&2
+        exit 1
+    fi
+    files="$FLASHCARD_DIR/$i "$files
+done
+
+# append title to temporary deck
+if [ $# -eq 1 ]; then
+    head -1 $FLASHCARD_DIR/$1 > /tmp/shuffle.$$
+else
+    echo Flashcard Set > /tmp/shuffle.$$
+fi
+
+# shuffle deck & store in temporary deck
+cat $files | awk \
+    'BEGIN { RS = "@@"
+             FS = "\n"
+             num_cards = 0                                              }
+           { card_titles[num_cards] = $1
+             card_data[num_cards]   = $2
+             num_cards++                                                }
+     END   { for (n = 0; n < 5; ++n) {
+                 for (i = 1; i < num_cards; ++i) {
+                     r = (int(rand() * 10) % (num_cards-1))+1
+                     
+                     temp = card_titles[i] 
+                     card_titles[i] = card_titles[r]
+                     card_titles[r] = temp
+                     
+                     temp = card_data[i]
+                     card_data[i] = card_data[r]
+                     card_data[r] = temp
+                 }
+             }
+             for (i = 1; i < num_cards; ++i) {
+                 printf "@@";
+                 print card_titles[i];
+                 print card_data[i];
+             }                                                          }' \
+>> /tmp/shuffle.$$
+
+NUM_CARDS=$(grep -c ^@@ /tmp/shuffle.$$)
+num_correct=0
+incorrect="no"
+
+# print title of deck
+head -1 /tmp/shuffle.$$
+echo
+
+i=$NUM_CARDS
+while [ $i -gt 0 ]; do
+    # print flashcard title & wait for user to press enter
+    flashcard=`awk 'BEGIN { RS = "@@";
+                            FS = "\n"; }
+                    NR == ('$NUM_CARDS' - '$i' + 2) { printf "%s", $1 }' \
+               < /tmp/shuffle.$$`
+    echo -n $flashcard "(Press enter) "
+    read cont
+    
+    # print flashcard answer
+    awk 'BEGIN { RS = "@@";
+                 FS = "\n"; 
+                 printf "\n"}
+         NR == ('$NUM_CARDS' - '$i' + 2) { print $2 }' \
+         < /tmp/shuffle.$$ | fmt -80
+                  
+    # ask user if answer is correct (only accept 'y' or 'n')
+    error="error"
+    while [ "$error" == "error" ]; do
+        echo -n '>> '
+        correct=$(pick correct)
+        
+        if [ "$correct" != "error" ]; then
+            error="none"
+        fi
+    done
+    
+    # if correct,   add to $num_correct
+    # if incorrect, save title of flashcard to display at end
+    if [ "$correct" == "correct" ]; then
+        num_correct=$(expr $num_correct + 1)
+    else
+        echo @@$flashcard >> /tmp/wrong.$$
+        incorrect="yes"
+    fi
+    
+    echo
+    
+    # increment loop index. if the result is 0, the exit code is 1, so since we
+    # have set -e on we write "|| true" to give it a 0 exit status
+    i=$(expr $i - 1 || true)
+done
+
+
+# print titles of flashcards user missed
+if [ "$incorrect" == "yes" ]; then    
+    echo Missed Questions:
+    cat /tmp/wrong.$$ | cut -d@ -f 3 | sed "s/^/>> /"
+    echo
+fi
+
+# display percentage
+PERCENTAGE=$(echo "scale=2; ($num_correct / $NUM_CARDS) * 100" | bc | \
+             cut -d. -f 1,1)            
+echo Correct: $PERCENTAGE%
+
+rm /tmp/shuffle.$$ /tmp/wrong.$$ 2>/dev/null  # clean up

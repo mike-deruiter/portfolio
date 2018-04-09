@@ -1,0 +1,69 @@
+#!/bin/sh
+
+# playtime
+# Part of an ecosystem of hacks that tracks playtime of Linux-native games
+# (I don't think it works w/ wine). This script, mostly written in awk, reads
+# the raw playtime data from a pre-defined location & in a pre-defined format
+# & displays it. Much faster than the Python version!
+
+set -eu
+
+PROGNAME=$(echo $0 | sed "s#.*/##")
+PLAYTIME_DIR="$HOME/Documents/Playtime"
+
+if ! ls $PLAYTIME_DIR/*/* 2>/dev/null 1>&2; then
+    echo "$PROGNAME: Playtime data not found." 1>&2
+    exit 1
+fi
+
+separator=$(printf %80s | tr ' ' '=')
+
+cat $(ls $PLAYTIME_DIR/*/*) | \
+awk 'BEGIN { FS=";"                                   
+             printf "'$separator'"                    }
+           { playtime[$2] += $1 
+             total += $1                              }
+     END   { for (game in playtime) games[++j] = game
+             
+             for (x in games) {
+                y = games[x]
+                z = x - 1
+                
+                while (z && games[z] > y)
+                    games[z + 1] = games[z--]
+                   
+                games[z + 1] = y
+             }
+             
+             games[++j] = "Total:"
+             for (i = 1; i <= j; ++i) {
+                 if (i != j)
+                     minutes = playtime[games[i]]
+                 else
+                     minutes = total
+                 hours = 0
+                 while (minutes - 60 > 0) {
+                     hours++
+                     minutes -= 60
+                 }
+                 if (i == j) {
+                     printf "'$separator'"
+                 } 
+                 printf "%-58s ", games[i]
+                 
+                 if (hours > 0)
+                     if (hours > 1)
+                         printf "%3d Hours, ", hours
+                     else
+                         printf "%3d  Hour, ", hours
+                 else
+                    printf "           "
+                 
+                 if (minutes > 0)   
+                    if (minutes > 1)
+                        printf "%2d Minutes\n", minutes
+                    else
+                        printf "%2d  Minute\n", minutes 
+                 else
+                        print " 0 Minutes" 
+             }                                        }'
