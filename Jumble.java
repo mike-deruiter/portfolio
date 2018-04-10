@@ -1,3 +1,5 @@
+// Jumble.java - Java implementation of jumble.c
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Scanner;
