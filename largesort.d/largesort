@@ -1,0 +1,62 @@
+#!/bin/sh
+
+SOURCE_DIR=$HOME/Documents/Code/C
+
+PROGNAME=`echo $0 | sed "s#.*/##"`
+ARR_LENGTH_VAR=${1:-10000}
+NUM_BYTES_VAR=${2:-500}
+
+if [ "$1" = "--help" ]; then
+    echo "Usage: $PROGNAME [ARRAY_LENGTH] [RECORD_SIZE]" 1>&2
+    exit 0
+fi
+
+cleanup() {
+    rm /tmp/lsa.$$ /tmp/bcind.$$ /tmp/bcini.$$ /tmp/bcsed.$$ \
+       /tmp/bcshe.$$                                         2>/dev/null
+}
+
+compile() {
+    SOURCE=$1
+    OUTPUT=$2
+
+    gcc -o $OUTPUT $SOURCE 2>/dev/null || \
+    printf "$PROGNAME: error compiling executables.\n" 1>&2
+
+    if [ ! -e $OUTPUT ]; then
+        cleanup
+        exit 1
+    fi
+}
+
+run_trials() {
+    OPTS=$1
+    OUTPUT=$2
+    
+    echo -n "scale=3; (" > $OUTPUT
+    for trial in 1 2 3; do
+        START_TIME=`date +%s.%N`
+
+        /tmp/lsa.$$ $OPTS 2>&1 >/dev/null
+
+        END_TIME=`date +%s.%N`
+        TIME=`echo "scale=3; $END_TIME - $START_TIME" | bc`
+
+        echo -n "$TIME+" >> $OUTPUT
+    done
+    echo "0) / 3" >> $OUTPUT
+}
+
+echo "Running..." 1>&2
+
+compile $SOURCE_DIR/largesort-argp.c /tmp/lsa.$$
+
+run_trials -n /tmp/bcind.$$
+run_trials -i /tmp/bcini.$$
+run_trials -s /tmp/bcsed.$$
+run_trials -S /tmp/bcshe.$$
+
+printf "Insertion Sort (Direct): %6.3f seconds\n" `cat /tmp/bcind.$$ | bc`
+printf "Indirect Insertion Sort: %6.3f seconds\n" `cat /tmp/bcini.$$ | bc`
+printf "Shell Sort:              %6.3f seconds\n" `cat /tmp/bcshe.$$ | bc`
+printf "Selection Sort:          %6.3f seconds\n" `cat /tmp/bcsed.$$ | bc`
