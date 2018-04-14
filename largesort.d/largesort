@@ -1,5 +1,10 @@
 #!/bin/sh
 
+# largesort
+#   Compiles largesort-argp.c (a program for sorting a large array of large
+#   records) & runs a series of trials, outputting statistics for a number of
+#   different sorts
+
 SOURCE_DIR=$HOME/Documents/Code/C
 
 PROGNAME=`echo $0 | sed "s#.*/##"`
@@ -56,7 +61,7 @@ run_trials -i /tmp/bcini.$$
 run_trials -s /tmp/bcsed.$$
 run_trials -S /tmp/bcshe.$$
 
-printf "Insertion Sort (Direct): %6.3f seconds\n" `cat /tmp/bcind.$$ | bc`
-printf "Indirect Insertion Sort: %6.3f seconds\n" `cat /tmp/bcini.$$ | bc`
-printf "Shell Sort:              %6.3f seconds\n" `cat /tmp/bcshe.$$ | bc`
-printf "Selection Sort:          %6.3f seconds\n" `cat /tmp/bcsed.$$ | bc`
+printf "Insertion Sort (Direct): %6.3f seconds\n" $(cat /tmp/bcind.$$ | bc)
+printf "Indirect Insertion Sort: %6.3f seconds\n" $(cat /tmp/bcini.$$ | bc)
+printf "Shell Sort:              %6.3f seconds\n" $(cat /tmp/bcshe.$$ | bc)
+printf "Selection Sort:          %6.3f seconds\n" $(cat /tmp/bcsed.$$ | bc)
