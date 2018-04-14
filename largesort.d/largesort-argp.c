@@ -1,3 +1,6 @@
+/* largesort-argp - uncommented chunk of code that sorts a large array w/
+   large records, used by the largesort script.                           */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
