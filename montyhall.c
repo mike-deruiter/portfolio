@@ -35,20 +35,18 @@ void init_doors(int num_doors, bool *doors);
 int main()
 {
     int i;
-    int winsStrategy, winsNoStrategy; // count the number of wins
-    double winsStratPercent, winsNoStratPercent; // percentage of wins
-    bool *door_arr;
+
+    int winsStrategy, winsNoStrategy;
+    double winsStratPercent, winsNoStratPercent;
 
     winsStrategy = winsNoStrategy = 0; // initialize number of wins to 0
-
     
     /* seed the random number generator with the current time (accurate to
      * seconds only)                                                       */
     srand(time(NULL));
 
+    bool *door_arr;
     door_arr = (bool *) malloc(DOORS * sizeof(bool));
-
-    init_doors(DOORS, door_arr);
 
     // play the game 'iterations' times following the strategy.
     for (i = 0; i < ITERATIONS; ++i)
@@ -60,11 +58,11 @@ int main()
         if (playgame(false, DOORS, door_arr))
             ++winsNoStrategy;
 
-    // calculate the percentages.
+    /* calculate the percentages & convert to the form normally understood
+       by humans.                                                          */
     winsStratPercent = (double) winsStrategy / (double) ITERATIONS;
     winsNoStratPercent = (double) winsNoStrategy / (double) ITERATIONS;
-
-    // convert the percentages into the form normally understood by humans
+    
     winsStratPercent *= 100;
     winsNoStratPercent *= 100;
 
@@ -87,27 +85,27 @@ void init_doors(int num_doors, bool *doors) {
 /* playgame - play a single round of the game. */
 bool playgame(bool followingStrategy, int num_doors, bool *doors)
 {
-    int i;                 // used for controlling loops
+    int i;
 
-    // put a shiny red sports car behind one of the doors.
+    init_doors(DOORS, doors);
+
     int winningDoor = rand() % num_doors;
     doors[winningDoor] = true;
 
     // the player guesses a random door.
     int playerGuess = rand() % num_doors;
-
-    /* determine a random door to keep closed in case the player picked
-     * correctly.                                                       */ 
+ 
     int closedDoor;
-    do {
-        closedDoor = rand() % num_doors;
-    } while (closedDoor == playerGuess);
-
-    /* if the player didn't pick correctly, make the closed door the winning
-     * door.                                                                 */
+    
+    /* the closed door is the winning door unless the player's guess is
+       already the winning door, in which case it's random              */
     if (winningDoor != playerGuess)
         closedDoor = winningDoor;
-    
+    else
+        do {
+            closedDoor = rand() % num_doors;
+        } while (closedDoor == playerGuess);
+
     /* if the player is following the strategy, switch their guess to the
      * closed door                                                        */ 
     if (followingStrategy)
