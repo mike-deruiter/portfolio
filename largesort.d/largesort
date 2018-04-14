@@ -65,3 +65,5 @@ printf "Insertion Sort (Direct): %6.3f seconds\n" $(cat /tmp/bcind.$$ | bc)
 printf "Indirect Insertion Sort: %6.3f seconds\n" $(cat /tmp/bcini.$$ | bc)
 printf "Shell Sort:              %6.3f seconds\n" $(cat /tmp/bcshe.$$ | bc)
 printf "Selection Sort:          %6.3f seconds\n" $(cat /tmp/bcsed.$$ | bc)
+
+cleanup
