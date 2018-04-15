@@ -20,118 +20,119 @@
         
        FILE SECTION.
        FD  IP-TAPE.
-       01  IP-TAPE-REC                      PIC X(52).
+       01  IP-TAPE-REC              PIC X(52).
 
        SD  SW-TAPE.
        01  SW-TAPE-REC.
-            05  SW-TAPE-ARTIST              PIC X(20).
-            05  SW-TAPE-TITLE               PIC X(20).
-            05  SW-TAPE-YEAR                PIC X(04).
-            05  SW-TAPE-VALUE               PIC 999V99.
-            05  SW-TAPE-RATING              PIC 9V99.
+            05  SW-TAPE-ARTIST      PIC X(20).
+            05  SW-TAPE-TITLE       PIC X(20).
+            05  SW-TAPE-YEAR        PIC X(04).
+            05  SW-TAPE-VALUE       PIC 999V99.
+            05  SW-TAPE-RATING      PIC 9V99.
 
        FD  OP-COLLECTION.
        01  OP-COLLECTION-REC.              
-            05                              PIC X(06).
-            05  OP-TAPE-YEAR                PIC X(04).
-            05                              PIC X(03).
-            05  OP-TAPE-ARTIST              PIC X(20).
-            05                              PIC X(02).
-            05  OP-TAPE-TITLE               PIC X(20).
-            05                              PIC X(03).
-            05  OP-TAPE-VALUE               PIC $$$9.99.
-            05                              PIC X(05).
-            05  OP-TAPE-RATING              PIC 9.99.
+            05                      PIC X(06).
+            05  OP-TAPE-YEAR        PIC X(04).
+            05                      PIC X(03).
+            05  OP-TAPE-ARTIST      PIC X(20).
+            05                      PIC X(02).
+            05  OP-TAPE-TITLE       PIC X(20).
+            05                      PIC X(03).
+            05  OP-TAPE-VALUE       PIC $$$9.99.
+            05                      PIC X(05).
+            05  OP-TAPE-RATING      PIC 9.99.
 
        WORKING-STORAGE SECTION.
        01  WS-ACCUMULATORS.
-            05  A-TAPE-VALUE                PIC 9999V99 VALUE ZERO.
-            05  A-TAPE-RATING               PIC 999V99 VALUE ZERO.
-            05  A-TAPE-NUM                  PIC 9999 VALUE ZERO.
-            05  A-YEAR-TAPE-VALUE           PIC 9999V99 VALUE ZERO.
-            05  A-YEAR-TAPE-RATING          PIC 999V99 VALUE ZERO.
-            05  A-YEAR-TAPE-NUM             PIC 9999 VALUE ZERO.
+            05  A-TAPE-VALUE        PIC 9999V99 VALUE ZERO.
+            05  A-TAPE-RATING       PIC 999V99 VALUE ZERO.
+            05  A-TAPE-NUM          PIC 9999 VALUE ZERO.
+            05  A-YEAR-TAPE-VALUE   PIC 9999V99 VALUE ZERO.
+            05  A-YEAR-TAPE-RATING  PIC 999V99 VALUE ZERO.
+            05  A-YEAR-TAPE-NUM     PIC 9999 VALUE ZERO.
 
        01  WS-SWITCHES.
-            05  EOF-TAPE-SW                 PIC X VALUE "N".
-                88  EOF-TAPE                      VALUE "Y".            
+            05  EOF-TAPE-SW         PIC X VALUE "N".
+                88  EOF-TAPE              VALUE "Y".            
         
        01  WS-AVERAGES.
-            05  WS-AVG-TAPE-RATE            PIC 999V99 VALUE ZERO.
-            05  WS-AVG-TAPE-VAL             PIC 9999V99 VALUE ZERO.
+            05  WS-AVG-TAPE-RATE    PIC 999V99 VALUE ZERO.
+            05  WS-AVG-TAPE-VAL     PIC 9999V99 VALUE ZERO.
         
        01  WS-TEMPORARY.
-            05  WS-PREV-YEAR                PIC X(04) VALUE ALL SPACES.
+            05  WS-PREV-YEAR        PIC X(04) VALUE ALL SPACES.
         
        01  YEAR-AVERAGE-REC.
-            05                              PIC X(06) VALUE ALL SPACES.
-            05  YA-YEAR                     PIC X(05) VALUE ALL SPACES.
-            05                              PIC X(08) VALUE "AVERAGE:".
-            05                              PIC X(40) VALUE ALL SPACES.
-            05  YA-TAPE-VALUE               PIC $$9.99 VALUE ZERO.
-            05                              PIC X(05) VALUE ALL SPACES.
-            05  YA-TAPE-RATING              PIC 9.99 VALUE ZERO.
+            05                      PIC X(06) VALUE ALL SPACES.
+            05  YA-YEAR             PIC X(05) VALUE ALL SPACES.
+            05                      PIC X(08) VALUE "AVERAGE:".
+            05                      PIC X(40) VALUE ALL SPACES.
+            05  YA-TAPE-VALUE       PIC $$9.99 VALUE ZERO.
+            05                      PIC X(05) VALUE ALL SPACES.
+            05  YA-TAPE-RATING      PIC 9.99 VALUE ZERO.
             
        01  YEAR-TOTAL-REC.
-            05                              PIC X(06) VALUE ALL SPACES.
-            05  YT-YEAR                     PIC X(05) VALUE ALL SPACES.
-            05                              PIC X(06) VALUE "TOTAL:".
-            05                              PIC X(40) VALUE ALL SPACES.
-            05  YT-TAPE-VALUE               PIC $,$$9.99 VALUE ZERO.
+            05                      PIC X(06) VALUE ALL SPACES.
+            05  YT-YEAR             PIC X(05) VALUE ALL SPACES.
+            05                      PIC X(06) VALUE "TOTAL:".
+            05                      PIC X(40) VALUE ALL SPACES.
+            05  YT-TAPE-VALUE       PIC $,$$9.99 VALUE ZERO.
         
        01  GRAND-AVERAGE-REC.
-            05                              PIC X(06) VALUE ALL SPACES.
-            05                              PIC X(06) VALUE "GRAND ".
-            05                              PIC X(08) VALUE "AVERAGE:".
-            05                              PIC X(39) VALUE ALL SPACES.
-            05  GA-TAPE-VALUE               PIC $$9.99 VALUE ZERO.
-            05                              PIC X(05) VALUE ALL SPACES.
-            05  GA-TAPE-RATING              PIC 9.99 VALUE ZERO.
+            05                      PIC X(06) VALUE ALL SPACES.
+            05                      PIC X(06) VALUE "GRAND ".
+            05                      PIC X(08) VALUE "AVERAGE:".
+            05                      PIC X(39) VALUE ALL SPACES.
+            05  GA-TAPE-VALUE       PIC $$9.99 VALUE ZERO.
+            05                      PIC X(05) VALUE ALL SPACES.
+            05  GA-TAPE-RATING      PIC 9.99 VALUE ZERO.
 
        01  GRAND-TOTAL-REC.
-            05                              PIC X(06) VALUE ALL SPACES.
-            05                              PIC X(06) VALUE "GRAND ".
-            05                              PIC X(06) VALUE "TOTAL:".
-            05                              PIC X(39) VALUE ALL SPACES.
-            05  GT-TAPE-VALUE               PIC $,$$9.99 VALUE ZERO.
+            05                      PIC X(06) VALUE ALL SPACES.
+            05                      PIC X(06) VALUE "GRAND ".
+            05                      PIC X(06) VALUE "TOTAL:".
+            05                      PIC X(39) VALUE ALL SPACES.
+            05  GT-TAPE-VALUE       PIC $,$$9.99 VALUE ZERO.
             
        01  TITLE-1.
-            05  PIC X(28) VALUE ALL SPACES.
-            05  PIC X(25) VALUE "MIKE'S TAPE COLLECTION".
+            05                      PIC X(28) VALUE ALL SPACES.
+            05                      PIC X(15) VALUE "MIKE'S TAPE ".
+            05                      PIC X(10) VALUE "COLLECTION".
 
        01  HEADER-1.
-            05  PIC X(06) VALUE ALL SPACES.
-            05  PIC X(04) VALUE "YEAR".
-            05  PIC X(03) VALUE ALL SPACES.
-            05  PIC X(20) VALUE "ARTIST".
-            05  PIC X(02) VALUE ALL SPACES.
-            05  PIC X(20) VALUE "TITLE".
-            05  PIC X(05) VALUE ALL SPACES.
-            05  PIC X(05) VALUE "VALUE".
-            05  PIC X(03) VALUE ALL SPACES.
-            05  PIC X(06) VALUE "RATING".
+            05                      PIC X(06) VALUE ALL SPACES.
+            05                      PIC X(04) VALUE "YEAR".
+            05                      PIC X(03) VALUE ALL SPACES.
+            05                      PIC X(20) VALUE "ARTIST".
+            05                      PIC X(02) VALUE ALL SPACES.
+            05                      PIC X(20) VALUE "TITLE".
+            05                      PIC X(05) VALUE ALL SPACES.
+            05                      PIC X(05) VALUE "VALUE".
+            05                      PIC X(03) VALUE ALL SPACES.
+            05                      PIC X(06) VALUE "RATING".
 
        01  HEADER-DASHES.
-            05  PIC X(06) VALUE ALL SPACES.
-            05  PIC X(04) VALUE ALL "-".
-            05  PIC X(03) VALUE ALL SPACES.
-            05  PIC X(20) VALUE ALL "-".
-            05  PIC X(02) VALUE ALL SPACES.
-            05  PIC X(20) VALUE ALL "-".
-            05  PIC X(03) VALUE ALL SPACES.
-            05  PIC X(07) VALUE ALL "-".
-            05  PIC X(03) VALUE ALL SPACES.
-            05  PIC X(06) VALUE ALL "-".
+            05                      PIC X(06) VALUE ALL SPACES.
+            05                      PIC X(04) VALUE ALL "-".
+            05                      PIC X(03) VALUE ALL SPACES.
+            05                      PIC X(20) VALUE ALL "-".
+            05                      PIC X(02) VALUE ALL SPACES.
+            05                      PIC X(20) VALUE ALL "-".
+            05                      PIC X(03) VALUE ALL SPACES.
+            05                      PIC X(07) VALUE ALL "-".
+            05                      PIC X(03) VALUE ALL SPACES.
+            05                      PIC X(06) VALUE ALL "-".
 
        01  FOOTER-DASHES.
-            05  PIC X(58) VALUE ALL SPACES.
-            05  PIC X(07) VALUE ALL "-".
-            05  PIC X(03) VALUE ALL SPACES.
-            05  PIC X(06) VALUE ALL "-".
+            05                      PIC X(58) VALUE ALL SPACES.
+            05                      PIC X(07) VALUE ALL "-".
+            05                      PIC X(03) VALUE ALL SPACES.
+            05                      PIC X(06) VALUE ALL "-".
             
        01  GRAND-TOTAL-AVG-DASHES.
-            05  PIC X(06) VALUE ALL SPACES.
-            05  PIC X(68) VALUE ALL "-".
+            05                      PIC X(06) VALUE ALL SPACES.
+            05                      PIC X(68) VALUE ALL "-".
 
        PROCEDURE DIVISION.
 
