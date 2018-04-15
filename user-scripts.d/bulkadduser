@@ -1,0 +1,129 @@
+#!/usr/bin/python3
+
+# bulkadduser
+# Usage: bulkadduser [FILES...]
+# Take a list of real names of the format "[FIRSTNAME ][MIDDLENAME ]LASTNAME" &
+#   create list of usernames of the format "lastfmXX", where XX is a number
+#   greater than or equal to 01. Then, add the users to the system. Usernames
+#   are guaranteed not to conflict w/ pre-existing users or each other.
+
+# Notes: Works perfectly on Red Hat systems, but when tested on Ubuntu the
+#        useradd command seems to work differently (doesn't add home
+#        directories, etc.)
+
+#TODO: When there's an error adding a user, print it to stderr
+
+import os, sys, subprocess, pwd, string, re, fileinput, random
+
+PROGNAME = os.path.split(sys.argv[0])[1]
+
+def show_usage(message, code=1):
+    print(message)
+    print("Usage: %s file" % (sys.argv[0]))
+    sys.exit(code)
+
+def gen_name_list():
+    names = list()
+    
+    try:
+        for line in fileinput.input():        
+            line = re.sub('\s+', ' ', line)
+            line = line.strip()
+            line = re.sub('[^a-zA-Z ]', '', line)
+            line = line.lower()
+            names.append(line)
+    except IOError:
+        show_usage("%s: Invalid filename in arguments" % (sys.argv[0]))
+    
+    list.sort(names)
+    
+    return names
+    
+def random_passwd():
+    return ''.join( random.choice(string.ascii_lowercase + 
+                                  string.ascii_uppercase +
+                                  string.digits) for _ in range(8) )
+
+def append_number(name):
+    name = re.sub("\d+$", "", name)
+    
+    if duplicate_count < 10:
+        name += "0"
+    name += str(duplicate_count)
+    
+    return name
+    
+def resolve_username(name):
+    while True:
+        if not name in formatted_names:
+            try:
+                checkname = pwd.getpwnam(name)
+            except KeyError:
+                return name
+                
+            re_number_at_end = re.compile(r'^[^\d]*(\d+)$')
+            
+            duplicate_count = int(re_number_at_end.match(name).group(1)) + 1
+            
+            name = re.sub("\d+$", "", name)
+    
+            if duplicate_count < 10:
+                name += "0"
+            name += str(duplicate_count)
+
+if os.geteuid() != 0:
+    show_usage("%s must be run as root." % (PROGNAME))
+    
+names = gen_name_list()
+formatted_names = list()
+
+duplicate_count = 1
+
+curr = ""
+prev = ""
+
+for user in names:
+    re_username = re.compile(r'^((\w)\w* )?((\w)\w* )?(\w{1,4})\w*$')
+    
+    rematch_username = re_username.match(user)
+    
+    if not rematch_username:
+        continue
+    
+    name = rematch_username.group(5)
+    if rematch_username.group(2):
+        name += rematch_username.group(2)
+    if rematch_username.group(4):
+        name += rematch_username.group(4)
+        
+    curr = name
+    
+    if curr == prev:
+        duplicate_count += 1
+    else:
+        duplicate_count = 1
+        
+    name = append_number(name)
+    name = resolve_username(name)
+    
+    formatted_names.append(name)
+    prev = curr
+    
+for user in formatted_names:
+    useradd = subprocess.Popen("useradd {0} 2>/dev/null".format(user),
+                               shell=True)
+    useradd.wait()
+    
+    if useradd.returncode == 0:
+        randompw = random_passwd()
+        
+        passwd_proc = subprocess.Popen("echo {0}:{1} | chpasswd".
+                                       format(user, randompw), shell=True)
+        passwd_proc.wait()
+        
+        if passwd_proc.returncode == 0:
+            print("%-8s : %s" % (user, randompw))
+        else:
+            print("%-8s : <error initializing password>" % (user))
+    else:
+        print("%-8s : <error adding user>" % (user))
