@@ -1,4 +1,5 @@
 #!/bin/bash
+#TODO: Allow multiline answers
 
 set -eu
 
@@ -97,7 +98,6 @@ while [ $i -gt 0 ]; do
                                                print $i
                                            }                          }' \
          < /tmp/shuffle.$$ | fmt -s -w 80          
-    echo
     
     # ask user if answer is correct (only accept 'y' or 'n')
     error="error"
