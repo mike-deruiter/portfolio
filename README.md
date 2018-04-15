@@ -8,7 +8,7 @@ Collected here is an assortment of toy programs written by Mike DeRoitr as he fu
 
 ## Languages Used
 
-Currently, there are programs in Java, C, Ruby, sh, & COBOL (Mike took a course). Files w/o a suffix are either scripts or sample data for said scripts; inspecting the files will reveal which one.
+Currently, there are programs in C, C++, Java, sh, Python, Ruby, & COBOL (Mike took a course). Files w/o a suffix are either scripts or sample data for said scripts; inspecting the files will reveal which one.
 
 ---
 
