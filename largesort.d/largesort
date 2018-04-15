@@ -5,7 +5,7 @@
 #   records) & runs a series of trials, outputting statistics for a number of
 #   different sorts
 
-SOURCE_DIR=$HOME/Documents/Code/C
+SOURCE_DIR="."
 
 PROGNAME=`echo $0 | sed "s#.*/##"`
 ARR_LENGTH_VAR=${1:-10000}
