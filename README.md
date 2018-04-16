@@ -2,7 +2,7 @@
 
 ## Descripton
 
-Collected here is an assortment of toy programs written by Mike DeRoitr as he furthers his understanding of how to program & importantly, how the hell to use Git! You can reach Mike at aynrandjuggalo@gmail.com.
+Collected here is an assortment of toy programs written by Mike DeRuiter as he furthers his understanding of how to program & importantly, how the hell to use Git! You can reach Mike at aynrandjuggalo@gmail.com.
 
 ---
 
