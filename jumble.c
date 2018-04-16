@@ -1,4 +1,4 @@
-/* jumble - takes jumbled-up words as arguments & figures out if they 
+/* jumble - takes jumbled-up words from stdin & figures out if they 
    unscramble to any words in the system's dictionary (/usr/share/dict/words) */
 
 #include <stdio.h>
