@@ -1,4 +1,4 @@
-**Toy Programs by Mike DeRoitr**
+**Toy Programs by Mike DeRuiter**
 
 ## Descripton
 
@@ -12,4 +12,4 @@ Currently, there are programs in C, Java, sh, Python, Ruby, & COBOL (Mike took a
 
 ---
 
-By Mike DeRoitr.
+By Mike DeRuiter.
