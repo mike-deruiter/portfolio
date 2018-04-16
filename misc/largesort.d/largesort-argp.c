@@ -53,7 +53,7 @@ static error_t parse_opt(int key, char *arg, struct argp_state *state)
             if (!args->sort_type) {
                 args->sort_type = INSERTION;
             } else {
-                argus->sort_type = TOO_MANY_OPTS_ERR;
+                args->sort_type = TOO_MANY_OPTS_ERR;
             }
             break;
         case 'i':
