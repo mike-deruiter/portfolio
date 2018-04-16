@@ -12,6 +12,7 @@
 #        directories, etc.)
 
 #TODO: When there's an error adding a user, print it to stderr
+#TODO: Don't allow zero arguments
 
 import os, sys, subprocess, pwd, string, re, fileinput, random
 
