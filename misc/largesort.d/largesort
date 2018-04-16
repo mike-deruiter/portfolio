@@ -7,14 +7,7 @@
 
 SOURCE_DIR="."
 
-PROGNAME=`echo $0 | sed "s#.*/##"`
-ARR_LENGTH_VAR=${1:-10000}
-NUM_BYTES_VAR=${2:-500}
-
-if [ "$1" = "--help" ]; then
-    echo "Usage: $PROGNAME [ARRAY_LENGTH] [RECORD_SIZE]" 1>&2
-    exit 0
-fi
+PROGNAME=$(echo $0 | sed "s#.*/##")
 
 cleanup() {
     rm /tmp/lsa.$$ /tmp/bcind.$$ /tmp/bcini.$$ /tmp/bcsed.$$ \

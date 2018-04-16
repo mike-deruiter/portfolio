@@ -1,5 +1,5 @@
-/* largesort-argp - uncommented chunk of code that sorts a large array w/
-   large records, used by the largesort script.                           */
+/* largesort-argp - sorts a large array w/ large records, used by the 
+   largesort script.                                                  */
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -16,14 +16,14 @@
 #define SHELLSORT            4
 #define TOO_MANY_OPTS_ERR   -1
 
-typedef struct record {
+typedef struct {
     union {
-        int value;
-        char offset[NUM_BYTES];
+        int  value;
+        char filler[NUM_BYTES];
     } key;
 } record;
 
-// information for argp
+/* BEGINNING OF CODE FOR ARGP *************************************************/
 const char *argp_program_version = "largesort v0.2.0";
 const char *argp_program_bug_address = "<aynrandjuggalo@gmail.com>";
 static char doc[] = "largesort - sorts a large array with large records.";
@@ -44,36 +44,37 @@ struct arguments
 
 static error_t parse_opt(int key, char *arg, struct argp_state *state)
 {
-    struct arguments *arguments = state->input;
+    struct arguments *args = state->input;
 
+    // Set the sort type. If more than one option is specified it's an error.
     switch(key)
     {
         case 'n':
-            if (!arguments->sort_type) {
-                arguments->sort_type = INSERTION;
+            if (!args->sort_type) {
+                args->sort_type = INSERTION;
             } else {
-                arguments->sort_type = TOO_MANY_OPTS_ERR;
+                argus->sort_type = TOO_MANY_OPTS_ERR;
             }
             break;
         case 'i':
-            if (!arguments->sort_type) {
-                arguments->sort_type = INDIRECT;
+            if (!args->sort_type) {
+                args->sort_type = INDIRECT;
             } else {
-                arguments->sort_type = TOO_MANY_OPTS_ERR;
+                args->sort_type = TOO_MANY_OPTS_ERR;
             }
             break;
         case 's':
-            if (!arguments->sort_type) {
-                arguments->sort_type = SELECTION;
+            if (!args->sort_type) {
+                args->sort_type = SELECTION;
             } else {
-                arguments->sort_type = TOO_MANY_OPTS_ERR;
+                args->sort_type = TOO_MANY_OPTS_ERR;
             }
             break;
         case 'S':
-            if (!arguments->sort_type) {
-                arguments->sort_type = SHELLSORT;
+            if (!args->sort_type) {
+                args->sort_type = SHELLSORT;
             } else {
-                arguments->sort_type = TOO_MANY_OPTS_ERR;
+                args->sort_type = TOO_MANY_OPTS_ERR;
             }
             break;
         default:
@@ -84,6 +85,7 @@ static error_t parse_opt(int key, char *arg, struct argp_state *state)
 }   
 
 static struct argp argp = { options, parse_opt, args_doc, doc };
+/* END OF CODE FOR ARGP *******************************************************/
 
 void initialize_array(record a[]);
 
@@ -93,30 +95,32 @@ void shell_sort(record a[]);
 void selection_sort(record a[]);
 
 void sort(record a[], void (*s)(record a[]));
-void crash(record a[]);
+void debug(record a[]);
 
 int main(int argc, char *argv[])
 {
     int i, j;
-    record a[ARR_LENGTH+1];
-    void (*s)(record a[]);
+    void (*s)(record a[]);  // pointer to the sort function to use
+    record a[ARR_LENGTH+1]; // the array
 
+    // code for argp
     struct arguments arguments;
     arguments.sort_type = 0;
-    
     argp_parse(&argp, argc, argv, 0, 0, &arguments);
 
     srand(time(NULL));
     initialize_array(a);
-    s = crash;
+    
+    s = debug;
     
     if (arguments.sort_type == TOO_MANY_OPTS_ERR) {
         fprintf(stderr, "largesort: ambiguous sort algorithm specified.\n");
-        return 2;
+        exit(1);
     } else if (!arguments.sort_type) {
         arguments.sort_type = INSERTION;
     }
 
+    // determine the sort type
     if (arguments.sort_type == INSERTION) {
         s = insertion_sort;
     } else if (arguments.sort_type == INDIRECT) {
@@ -134,7 +138,7 @@ int main(int argc, char *argv[])
         printf("%3d\n", a[i].key.value);
     }
 
-    return 0;
+    exit(0);
 }
 
 void initialize_array(record a[]) {
@@ -151,9 +155,9 @@ void sort(record a[], void (*s)(record a[])) {
     s(a);
 }
 
-void crash(record a[]) {
-    fprintf(stderr, "largesort: internal error. Exiting...");
-    exit(1);
+void debug(record a[]) {
+    fprintf(stderr, "largesort: Sort function not implemented.");
+    exit(100);
 }
 
 void insertion_sort(record a[])
@@ -190,6 +194,8 @@ void insertion_sort_indirect(record a[])
     int next, n;
     record temp;
 
+    // Adapted from "Algorithms in C" by Robert Sedgewick.
+    // I quickly forget how it works each time I figure it out.
     for (i = 1; i <= ARR_LENGTH; ++i) {
         if (p[i] != i) {
             temp = a[i];
