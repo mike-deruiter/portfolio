@@ -41,7 +41,7 @@ int main(int argc, char *argv[])
 
 void buff_alloc()
 {
-    p_vector = malloc(sizeof(char) * (BUFFER * buf_mult++));
+    p_vector = malloc(sizeof(packet) * (BUFFER * buf_mult++));
 }
 
 int read_packet()
