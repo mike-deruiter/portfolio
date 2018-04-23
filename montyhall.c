@@ -24,13 +24,13 @@
 #include <time.h>
 #include <stdbool.h>
 
-// Constants
 #define DOORS       3
 #define ITERATIONS  10000
 
-// Function prototypes
-bool playgame(bool strategy, int num_doors, bool *doors);
-void init_doors(int num_doors, bool *doors);
+bool playgame(bool strategy);
+void init_doors();
+
+bool *doors;
 
 int main()
 {
@@ -39,23 +39,20 @@ int main()
     int winsStrategy, winsNoStrategy;
     double winsStratPercent, winsNoStratPercent;
 
-    winsStrategy = winsNoStrategy = 0; // initialize number of wins to 0
+    winsStrategy = winsNoStrategy = 0;
     
-    /* seed the random number generator with the current time (accurate to
-     * seconds only)                                                       */
     srand(time(NULL));
 
-    bool *door_arr;
-    door_arr = (bool *) malloc(DOORS * sizeof(bool));
+    doors = (bool *) malloc(DOORS * sizeof(bool));
 
     // play the game 'iterations' times following the strategy.
     for (i = 0; i < ITERATIONS; ++i)
-        if (playgame(true, DOORS, door_arr))
+        if (playgame(true))
             ++winsStrategy;
 
     // play the game 'interations' times not following the strategy.
     for (i = 0; i < ITERATIONS; ++i)
-        if (playgame(false, DOORS, door_arr))
+        if (playgame(false))
             ++winsNoStrategy;
 
     /* calculate the percentages & convert to the form normally understood
@@ -75,25 +72,25 @@ int main()
     return 0;
 }
 
-void init_doors(int num_doors, bool *doors) {
+void init_doors() {
     int i;
 
-    for (i = 0; i < num_doors; ++i)
+    for (i = 0; i < DOORS; ++i)
         doors[i] = false;
 }
 
 /* playgame - play a single round of the game. */
-bool playgame(bool followingStrategy, int num_doors, bool *doors)
+bool playgame(bool followingStrategy)
 {
     int i;
 
-    init_doors(DOORS, doors);
+    init_doors();
 
-    int winningDoor = rand() % num_doors;
+    int winningDoor = rand() % DOORS;
     doors[winningDoor] = true;
 
     // the player guesses a random door.
-    int playerGuess = rand() % num_doors;
+    int playerGuess = rand() % DOORS;
  
     int closedDoor;
     
@@ -103,7 +100,7 @@ bool playgame(bool followingStrategy, int num_doors, bool *doors)
         closedDoor = winningDoor;
     else
         do {
-            closedDoor = rand() % num_doors;
+            closedDoor = rand() % DOORS;
         } while (closedDoor == playerGuess);
 
     /* if the player is following the strategy, switch their guess to the
