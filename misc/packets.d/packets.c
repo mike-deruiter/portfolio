@@ -1,3 +1,5 @@
+//TODO: Print leading zeroes in message_id
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -6,7 +8,7 @@
 #define BUFFER  100
 
 // function prototypes
-void vec_alloc();
+void buff_alloc();
 int read_packet();
 void sort_pvector();
 void print_pvector();
@@ -19,25 +21,29 @@ typedef struct {
     char *message;
 } packet;
 
-int buf_mult = 1;
-int v_size = 0;
-
+int buf_mult;
 packet *p_vector;
+int v_size;
 
 int main(int argc, char *argv[])
-{    
-    vec_alloc();
+{
+
+    buf_mult = 1;
+    v_size = 0;
     
-    while (read_packet())
-        ;
+    buff_alloc();
+    
+    while (read_packet()) {
+    }
     
     sort_pvector();
+    
     print_pvector();
 }
 
-void vec_alloc()
+void buff_alloc()
 {
-    p_vector = malloc(sizeof(packet) * (BUFFER * buf_mult++));
+    p_vector = malloc(sizeof(char) * (BUFFER * buf_mult++));
 }
 
 int read_packet()
@@ -45,19 +51,18 @@ int read_packet()
     size_t buf_size = 80;
 
     if (v_size >= (BUFFER * buf_mult)) {
-        vec_alloc();
+        buff_alloc();
     }
 
     if (scanf("%d", &p_vector[v_size].message_id) > 0 &&
         scanf("%d", &p_vector[v_size].packet_id) > 0 &&
         scanf("%d", &p_vector[v_size].total_packets) > 0) {
         
-        p_vector[v_size].message = malloc(sizeof(char) * buf_size + 1);
+        p_vector[v_size].message = malloc(sizeof(char) * 81);
         
         if (getline(&(p_vector[v_size].message), &buf_size, stdin) > 0) {
-            
             p_vector[v_size].message = 
-                trim_whitespace(p_vector[v_size].message, buf_size);
+                trim_whitespace(p_vector[v_size].message, 80);
             ++v_size;
         } else {
             return false;
@@ -118,7 +123,7 @@ void print_pvector()
     int i;
     
     for (i = 0; i < v_size; ++i) {   
-        printf("%4d    %-2d  %-2d  %s", p_vector[i].message_id,
+        printf("%04d   %-2d  %-2d  %s", p_vector[i].message_id,
                p_vector[i].packet_id, p_vector[i].total_packets,
                p_vector[i].message);
     }
