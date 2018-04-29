@@ -6,7 +6,7 @@
 #define BUFFER  100
 
 // function prototypes
-void buff_alloc();
+void vec_alloc();
 int read_packet();
 void sort_pvector();
 void print_pvector();
@@ -19,27 +19,23 @@ typedef struct {
     char *message;
 } packet;
 
-int buf_mult;
+int buf_mult = 1;
+int v_size = 0;
+
 packet *p_vector;
-int v_size;
 
 int main(int argc, char *argv[])
-{
-
-    buf_mult = 1;
-    v_size = 0;
+{    
+    vec_alloc();
     
-    buff_alloc();
-    
-    while (read_packet()) {
-    }
+    while (read_packet())
+        ;
     
     sort_pvector();
-    
     print_pvector();
 }
 
-void buff_alloc()
+void vec_alloc()
 {
     p_vector = malloc(sizeof(packet) * (BUFFER * buf_mult++));
 }
@@ -49,18 +45,19 @@ int read_packet()
     size_t buf_size = 80;
 
     if (v_size >= (BUFFER * buf_mult)) {
-        buff_alloc();
+        vec_alloc();
     }
 
     if (scanf("%d", &p_vector[v_size].message_id) > 0 &&
         scanf("%d", &p_vector[v_size].packet_id) > 0 &&
         scanf("%d", &p_vector[v_size].total_packets) > 0) {
         
-        p_vector[v_size].message = malloc(sizeof(char) * 81);
+        p_vector[v_size].message = malloc(sizeof(char) * buf_size + 1);
         
         if (getline(&(p_vector[v_size].message), &buf_size, stdin) > 0) {
+            
             p_vector[v_size].message = 
-                trim_whitespace(p_vector[v_size].message, 80);
+                trim_whitespace(p_vector[v_size].message, buf_size);
             ++v_size;
         } else {
             return false;
