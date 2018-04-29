@@ -39,9 +39,17 @@ typedef struct hash_node {
 HashNode *hashArray[SIZE];
 
 int main(int argc, char *argv[]) {
+    int i;
+
     initHash();
 
-    read_process_words(stdin, insert_word); 
+    if (argc == 1) {
+        fprintf(stderr, "jumble: 1 or more arguments required\n");
+    } else {
+        for (i = 1; i < argc; ++i) {
+            insert_word(argv[i]);
+        }
+    }
 
     FILE *dict = fopen(DICT, "r");
 
