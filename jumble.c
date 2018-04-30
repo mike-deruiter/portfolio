@@ -13,9 +13,9 @@ typedef enum { false, true } bool;
 #endif
 
 // macros
-#define DICT    "/usr/share/dict/words"
-#define SIZE    20
-#define BUFFER  1000
+#define DICT        "/usr/share/dict/words"
+#define SIZE        20
+#define LINE_BUFFER 500
 
 // function prototypes
 void read_process_words(FILE *input, void do_work(char *t));
@@ -62,8 +62,10 @@ int main(int argc, char *argv[]) {
 
 /* read_process_words */
 void read_process_words(FILE *input, void do_work(char *t)) {
+    int i;
+
     char *line, *token = NULL;
-    char buf[BUFFER];
+    char buf[LINE_BUFFER];
    
     size_t chars_read, buf_len;
 
@@ -71,26 +73,29 @@ void read_process_words(FILE *input, void do_work(char *t)) {
         // reset variables
         line = NULL;
         line = (char *) malloc(sizeof(char));
-        line[0] = '\0'; // can't remember if this is truly necessary
+        line[0] = '\0';
         buf_len = 0;
 
-        buf[0] = '\0';
+        buf[0] = '\0'; // Don't remember why this is necessary
 
-        // read BUFFER bytes at a time, build up line
+        // read LINE_BUFFER bytes at a time, build up line
         do {
-            fgets(buf, BUFFER, input);
+            fgets(buf, LINE_BUFFER, input);
             chars_read = strlen(buf);
             buf_len += chars_read;
             line = realloc(line, sizeof(char) * buf_len + 1);
-            strcat(line, buf);	
-        } while (chars_read == BUFFER - 1 && buf[BUFFER - 2] != '\n');
+            strcat(line, buf);
+        } while (chars_read == LINE_BUFFER - 1);
 
         token = (char *) malloc(sizeof(char) * (buf_len + 1));
 
+        int m, n;
         char *l = line;
-        while (sscanf(line, "%s", token) > 0) {
+        for (i = 0, m = strlen(line); i < m; i += n + 1) {
+            sscanf(line, "%s", token);
             do_work(token);
-            line += strlen(token) + 1; 
+            n = strlen(token);
+            line += n + 1;
         }
 
         free(l);
