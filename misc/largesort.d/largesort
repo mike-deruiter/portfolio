@@ -8,6 +8,7 @@
 SOURCE_DIR="."
 
 PROGNAME=$(echo $0 | sed "s#.*/##")
+EXE=/tmp/lsa.$$
 
 cleanup() {
     rm /tmp/lsa.$$ /tmp/bcind.$$ /tmp/bcini.$$ /tmp/bcsed.$$ \
@@ -35,7 +36,7 @@ run_trials() {
     for trial in 1 2 3; do
         START_TIME=`date +%s.%N`
 
-        /tmp/lsa.$$ $OPTS 2>&1 >/dev/null
+        $EXE $OPTS 2>&1 >/dev/null
 
         END_TIME=`date +%s.%N`
         TIME=`echo "scale=3; $END_TIME - $START_TIME" | bc`
@@ -47,7 +48,7 @@ run_trials() {
 
 echo "Running..." 1>&2
 
-compile $SOURCE_DIR/largesort-argp.c /tmp/lsa.$$
+compile $SOURCE_DIR/largesort-argp.c $EXE
 
 run_trials -n /tmp/bcind.$$
 run_trials -i /tmp/bcini.$$
