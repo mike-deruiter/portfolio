@@ -1,0 +1,30 @@
+#!/bin/sh
+
+SOURCE_DIR="."
+ENCRYPT_EXE=/tmp/e.$$
+DECRYPT_EXE=/tmp/bf.$$
+
+PROGNAME=$(echo $0 | sed "s#.*/##")
+
+cleanup() {
+    rm /tmp/lsa.$$ /tmp/bcind.$$ /tmp/bcini.$$ /tmp/bcsed.$$ \
+       /tmp/bcshe.$$                                         2>/dev/null
+}
+
+compile() {
+    SOURCE=$1
+    OUTPUT=$2
+
+    gcc -o $OUTPUT $SOURCE 2>/dev/null || \
+    printf "$PROGNAME: error compiling executables.\n" 1>&2
+
+    if [ ! -e $OUTPUT ]; then
+        cleanup
+        exit 1
+    fi
+}
+
+#compile $SOURCE_DIR/encrypt.c $ENCRYPT_EXE
+compile $SOURCE_DIR/bruteforce.c $DECRYPT_EXE
+
+#$ENCRYPT_EXE | $DECRYPT_EXE
