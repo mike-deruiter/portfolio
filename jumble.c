@@ -14,7 +14,7 @@ typedef enum { false, true } bool;
 
 // macros
 #define DICT        "/usr/share/dict/words"
-#define SIZE        20
+#define HASH_SIZE   20
 #define LINE_BUFFER 500
 
 // function prototypes
@@ -23,7 +23,7 @@ void insert_word(char *token);
 void lookup_word(char *token);
 
 // hash table functions
-void initHash();
+void init_hash();
 unsigned long convert_to_key(char *s);
 int hash_code(unsigned long key);
 bool hash_contains(char *s);
@@ -34,14 +34,14 @@ void sort(char a[], int s);
 typedef struct hash_node {
     long key;
     struct hash_node *next;
-} HashNode;
+} hash_node;
 
-HashNode *hashArray[SIZE];
+hash_node *hash_array[HASH_SIZE];
 
 int main(int argc, char *argv[]) {
     int i;
 
-    initHash();
+    init_hash();
 
     if (argc == 1) {
         fprintf(stderr, "jumble: 1 or more arguments required\n");
@@ -119,17 +119,18 @@ void lookup_word(char *token) {
         printf("%s\n", output);
 }
 
-
-void initHash() {
+/* init_hash */
+void init_hash() {
     int i;
 
-    for (i = 0; i < SIZE; ++i)
-        hashArray[i] = NULL;
+    for (i = 0; i < HASH_SIZE; ++i)
+        hash_array[i] = NULL;
 }
 
+/* convert_to_key */
 unsigned long convert_to_key(char *s) {
     char c;
-    long key = 0;
+    unsigned long key = 0;
 
     while ((c = *s++) != '\0')
         key = (key * 27) + (c - 'a') + 1;
@@ -137,14 +138,11 @@ unsigned long convert_to_key(char *s) {
     return key;
 }
 
-int hash_code(unsigned long key) {
-    return key % SIZE;
-}
-
+/* hash_contains */
 bool hash_contains(char *s) {
     unsigned long key = convert_to_key(s);
 
-    HashNode *p = hashArray[hash_code(key)];
+    hash_node *p = hash_array[key % HASH_SIZE];
 
     while (p != NULL) {
         if (p->key == key)
@@ -155,17 +153,18 @@ bool hash_contains(char *s) {
     return false;
 }
  
+/* hash_insert */
 void hash_insert(char *s) {
     unsigned long key = convert_to_key(s);
 
-    HashNode *item = (HashNode*) malloc(sizeof(HashNode));
+    hash_node *item = (hash_node*) malloc(sizeof(hash_node));
     item->key = key;
     item->next = NULL;
  
-    HashNode *p = hashArray[hash_code(key)];
+    hash_node *p = hash_array[key % HASH_SIZE];
  
     if (p == NULL)
-        hashArray[hash_code(key)] = item;
+        hash_array[key % HASH_SIZE] = item;
     else {
         while (p->next != NULL)
             p = p->next;
