@@ -17,7 +17,6 @@ int bruteforce(char *input, int len);
 bool string_decrypts(char *input, int len);
 
 void read_process_words(FILE *input, void do_work(char *t));
-void insert_word(char *token);
 
 // hash table functions
 void init_hash();
@@ -44,7 +43,7 @@ int main(int argc, char *argv[])
     
     fprintf(stderr, "Loading dictionary...\n");
     FILE *dict = fopen("/usr/share/dict/words", "r");
-    read_process_words(dict, insert_word);
+    read_process_words(dict, hash_insert);
     fclose(dict);
     fprintf(stderr, "Done. Enter message\n");
     
@@ -111,30 +110,24 @@ int bruteforce(char *orig, int len)
 
 bool string_decrypts(char *input, int len)
 {
-    int i;
+    int i, n;
     char *token = malloc(sizeof(char) * len);
 
-    for (i = 0; i < len; i += strlen(token) + 1) {
+    for (i = 0; i < len; i += n + 1) {
         sscanf(input, "%s", token);
         if (! hash_contains(token))
             return false;
-        input += strlen(token) + 1;
+        n = strlen(token);
+        input += n + 1;
     }
-
-    /*
-    while (sscanf(input, "%s", token)) {
-        printf("%s ", token);
-        if (! hash_contains(token))
-            return false;
-        input += strlen(token) + 1;
-    }
-    */
     
     return true;
 }
 
 /* read_process_words */
 void read_process_words(FILE *input, void do_work(char *t)) {
+    int i;
+
     char *line, *token = NULL;
     char buf[LINE_BUFFER];
    
@@ -144,10 +137,10 @@ void read_process_words(FILE *input, void do_work(char *t)) {
         // reset variables
         line = NULL;
         line = (char *) malloc(sizeof(char));
-        line[0] = '\0'; // can't remember if this is truly necessary
+        line[0] = '\0';
         buf_len = 0;
 
-        buf[0] = '\0';
+        buf[0] = '\0'; // Don't remember why this is necessary
 
         // read LINE_BUFFER bytes at a time, build up line
         do {
@@ -155,24 +148,22 @@ void read_process_words(FILE *input, void do_work(char *t)) {
             chars_read = strlen(buf);
             buf_len += chars_read;
             line = realloc(line, sizeof(char) * buf_len + 1);
-            strcat(line, buf);	
-        } while (chars_read == LINE_BUFFER - 1 && buf[LINE_BUFFER - 2] != '\n');
+            strcat(line, buf);
+        } while (chars_read == LINE_BUFFER - 1);
 
         token = (char *) malloc(sizeof(char) * (buf_len + 1));
 
+        int m, n;
         char *l = line;
-        while (sscanf(line, "%s", token) > 0) {
+        for (i = 0, m = strlen(line); i < m; i += n + 1) {
+            sscanf(line, "%s", token);
             do_work(token);
-            line += strlen(token) + 1; 
+            n = strlen(token);
+            line += n + 1;
         }
 
         free(l);
     } while (chars_read);
-}
-
-/* insert_word */
-void insert_word(char *token) {
-    hash_insert(token);
 }
 
 /* init_hash */
