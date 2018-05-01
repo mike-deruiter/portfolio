@@ -22,7 +22,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
+
+// if we're using c99 or later, include stdbool.h; otherwise, roll our own
+#if __STDC_VERSION__ >= 199901L
 #include <stdbool.h>
+#else
+typedef enum { false, true } bool;
+#endif
 
 #define DOORS       3
 #define ITERATIONS  10000
@@ -36,38 +42,39 @@ int main()
 {
     int i;
 
-    int winsStrategy, winsNoStrategy;
-    double winsStratPercent, winsNoStratPercent;
+    int wins_strat, wins_nostrat;
+    double strat_percent, nostrat_percent;
 
-    winsStrategy = winsNoStrategy = 0;
-    
+    wins_strat = wins_nostrat = 0;
+
+    // seed the random number generator    
     srand(time(NULL));
 
-    doors = (bool *) malloc(DOORS * sizeof(bool));
+    doors = malloc(DOORS * sizeof(bool));
 
     // play the game 'iterations' times following the strategy.
     for (i = 0; i < ITERATIONS; ++i)
         if (playgame(true))
-            ++winsStrategy;
+            ++wins_strat;
 
     // play the game 'interations' times not following the strategy.
     for (i = 0; i < ITERATIONS; ++i)
         if (playgame(false))
-            ++winsNoStrategy;
+            ++wins_nostrat;
 
     /* calculate the percentages & convert to the form normally understood
        by humans.                                                          */
-    winsStratPercent = (double) winsStrategy / (double) ITERATIONS;
-    winsNoStratPercent = (double) winsNoStrategy / (double) ITERATIONS;
+    strat_percent = (double) wins_strat / (double) ITERATIONS;
+    nostrat_percent = (double) wins_nostrat / (double) ITERATIONS;
     
-    winsStratPercent *= 100;
-    winsNoStratPercent *= 100;
+    strat_percent *= 100;
+    nostrat_percent *= 100;
 
     // print output
     printf("The computer won %6.2f%% of the time while following the "
-           "strategy.\n", winsStratPercent);
+           "strategy.\n", strat_percent);
     printf("The computer won %6.2f%% of the time while not following the "
-           "strategy.\n", winsNoStratPercent);
+           "strategy.\n", nostrat_percent);
 
     return 0;
 }
@@ -80,42 +87,42 @@ void init_doors() {
 }
 
 /* playgame - play a single round of the game. */
-bool playgame(bool followingStrategy)
+bool playgame(bool following_strat)
 {
     int i;
 
     init_doors();
 
-    int winningDoor = rand() % DOORS;
-    doors[winningDoor] = true;
+    int winning_door = rand() % DOORS;
+    doors[winning_door] = true;
 
     // the player guesses a random door.
-    int playerGuess = rand() % DOORS;
+    int player_guess = rand() % DOORS;
  
-    int closedDoor;
+    int closed;
     
     /* the closed door is the winning door unless the player's guess is
        already the winning door, in which case it's random              */
-    if (winningDoor != playerGuess)
-        closedDoor = winningDoor;
+    if (winning_door != player_guess)
+        closed = winning_door;
     else
         do {
-            closedDoor = rand() % DOORS;
-        } while (closedDoor == playerGuess);
+            closed = rand() % DOORS;
+        } while (closed == player_guess);
 
     /* if the player is following the strategy, switch their guess to the
      * closed door                                                        */ 
-    if (followingStrategy)
-        playerGuess = closedDoor;
+    if (following_strat)
+        player_guess = closed;
     else
-        playerGuess = (rand() % 2) ? playerGuess : closedDoor;
+        player_guess = (rand() % 2) ? player_guess : closed;
 
     // return whether or not the player won.
-    if (doors[playerGuess]) {
-        doors[playerGuess] = false;
+    if (doors[player_guess]) {
+        doors[player_guess] = false;
         return true;
     } else {
-        doors[winningDoor] = false;
+        doors[winning_door] = false;
         return false;
     }
  }
