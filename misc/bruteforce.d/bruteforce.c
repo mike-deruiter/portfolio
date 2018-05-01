@@ -156,11 +156,9 @@ void read_process_words(FILE *input, void do_work(char *t)) {
 
         int m, n;
         char *l = line;
-        for (i = 0, m = strlen(line); i < m; i += n + 1) {
-            sscanf(line, "%s", token);
+        while (sscanf(line, "%s", token) > 0) {
             do_work(token);
-            n = strlen(token);
-            line += n + 1;
+            line += strlen(token) + 1; 
         }
 
         free(l);
