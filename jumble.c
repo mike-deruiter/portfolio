@@ -60,7 +60,8 @@ int main(int argc, char *argv[]) {
     return 0;
 }
 
-/* read_process_words */
+/* read_process_words - read a line of arbitray length & break it up into
+   tokens (words). Perform work on each token                             */
 void read_process_words(FILE *input, void do_work(char *t)) {
     int i;
 
@@ -76,7 +77,7 @@ void read_process_words(FILE *input, void do_work(char *t)) {
         line[0] = '\0';
         buf_len = 0;
 
-        buf[0] = '\0'; // Don't remember why this is necessary
+        buf[0] = '\0'; // don't remember why this is necessary
 
         // read LINE_BUFFER bytes at a time, build up line
         do {
@@ -170,6 +171,7 @@ void hash_insert(char *s) {
     }
 }
 
+/* sort */
 void sort(char a[], int sz)
 {
     // selection sort
@@ -182,6 +184,7 @@ void sort(char a[], int sz)
                 min = j;
             }
         }
+        // swap
         temp = a[min]; a[min] = a[i]; a[i] = temp;
     }
 }
