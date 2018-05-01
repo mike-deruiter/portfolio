@@ -1,34 +1,8 @@
 /* puzzle - Solves the following puzzle: Given the sequence of numbers
- * 1, 2, 3, 4, 5, 6, 7, 8, 9, how many ways can you insert a +, -, or nothing
- * between the digits to get a sum of 100? (Putting nothing between two
- * digits merges them into one number.)
- *  
- * Copyright (c) 2017, Mike DeRuiter. All rights reserved.
- * Send bugs to: aynrandjuggalo@gmail.com
- *
- * Redistribution and use in source and binary forms, with or without 
- * modification, are permitted provided that the following condition is met:
- *   1) Redistributions of source code (if you're distributing a binary you
- *      don't have to bother. This source is potentially interesting for 
- *      educational purposes but the program itself is hardly the GNU 
- *      compiler) must retain the above copyright notice (please remove the 
- *      bit about sending bug reports to me), this list of one whole 
- *      condition (including the funny parts) & the following disclaimer:
- * 
- * THIS SOFTWARE IS PROVIDED BY THE AUTHOR AND CONTRIBUTORS ''AS IS'' AND ANY 
- * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED 
- * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE 
- * DISCLAIMED. IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE FOR ANY 
- * DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES 
- * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR 
- * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER 
- * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT 
- * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY 
- * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF 
- * SUCH DAMAGE.                                                               
- *
- * THIS DISCLAIMER HAS SUPER COW POWERS. (You have to include this part too
- * b/c it's funny to me)                                                      */ 
+   1, 2, 3, 4, 5, 6, 7, 8, 9, how many ways can you insert a +, -, or nothing
+   between the digits to get a sum of 100? (Putting nothing between two
+   digits merges them into one number.)
+                                                                              */
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -50,11 +24,11 @@ typedef enum { false, true } bool;
 typedef enum { NONE, ADD = ('+' * -1), SUB = ('-' * -1) } op_type;
 
 // function protypes
+void init_operators();
 void solve_puzzle(int pos);
 void place_operator(int pos, op_type op);
-void init_operators();
 void gen_postfix();
-int eval_postfix();
+int  eval_postfix();
 void print_expression();
 bool is_operator(int i);
 
@@ -82,6 +56,15 @@ int main() {
     solve_puzzle(0);
 }
 
+/* init_operators */
+void init_operators() {
+    int i;
+
+    // initialize the array of operators.
+    for (i = 0; i < NUM_DIGITS - 1; ++i)
+        operators[i] = NONE;
+}
+
 /* solve_puzzle - recursive method for solving the puzzle. */
 void solve_puzzle(int pos) {
     if (pos >= NUM_DIGITS - 1)
@@ -104,14 +87,6 @@ void place_operator(int pos, op_type op) {
         solve_puzzle(pos + 1);
 }
     
-/* init_operators */
-void init_operators() {
-    int i;
-
-    // initialize the array of operators.
-    for (i = 0; i < NUM_DIGITS - 1; ++i)
-        operators[i] = NONE;
-}
 
 /* gen_postfix - create the postfix stack for evaluating the expression. */
 void gen_postfix() {
@@ -146,9 +121,9 @@ void gen_postfix() {
 /* eval_postfix - pop expressions off the stack & evaluate. */
 int eval_postfix() {
     int a;
-    int i = pop(postfix);
+    int p = pop(postfix);
 
-    switch (i) {
+    switch (p) {
         case ADD:
             /* we can reduce the recursive calls if we assume the next item
                in the stack is a number.                                    */
@@ -158,7 +133,7 @@ int eval_postfix() {
             a = pop(postfix);
             return eval_postfix() - a;
         default:
-            return i;
+            return p;
     }
 }
 
@@ -196,17 +171,17 @@ stack *init_stack(int size) {
     return s;
 }
 
-/* pf_push - push a value onto the stack. */
+/* push - push a value onto the stack. */
 void push(stack *s, int i) {
     s->stack[++s->top] = i;
 }
 
-/* pf_pop - pop a value from the stack. */
+/* pop - pop a value from the stack. */
 int pop(stack *s) {
     return s->stack[s->top--];
 }
 
-/* pf_peek - return the value on top of the stack. */
+/* peek - return the value on top of the stack. */
 int peek(stack *s) {
     return s->stack[s->top];
 }
