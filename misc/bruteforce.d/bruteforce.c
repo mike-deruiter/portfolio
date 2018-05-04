@@ -8,12 +8,12 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <string.h>
+#include <ctype.h>
 #include <time.h>
 
 #define HASH_SIZE   20
 #define LINE_BUFFER 50
 
-void encrypt(char *input);
 int bruteforce(char *input, int len);
 bool string_decrypts(char *input, int len);
 
@@ -46,18 +46,12 @@ int main(int argc, char *argv[])
     FILE *dict = fopen("/usr/share/dict/words", "r");
     read_process_words(dict, hash_insert);
     fclose(dict);
-    fprintf(stderr, "Done. Enter message\n");
     
-    // change these next 2 lines  
     len = getline(&line, &lb, stdin);
     // resize & chomp
     --len;
     line = realloc(line, sizeof(char) * len);
     line[len] = '\0';
-    
-    encrypt(line);
-    fprintf(stderr, "\n");
-    fprintf(stderr, "Encrypted Message: %s\n", line);
     
     if ((key = bruteforce(line, len)) != -1) {
         fprintf(stderr, "Key Found: %d\nDecrypted Message: %s\n", key, line);
@@ -69,35 +63,40 @@ int main(int argc, char *argv[])
     exit(0);
 }
 
-void encrypt(char *input)
-{
-    srand(time(NULL));
-
-    char key = rand() % 256;
-    char *p;
-    
-    for (p = input; *p != '\0'; ++p) {
-        *p ^= key;
-    }
-}
-
 int bruteforce(char *orig, int len)
 {
     int i;
-    char *p;
+    char *p, *t;
     unsigned char key;
     
     char *input = malloc(sizeof(char));
+    char *temp = malloc(sizeof(char));
     
     strcpy(input, orig);
     
+    bool up = false, abend = false;
+    
     for (i = 0, key = 0; i < 256; ++i, ++key) {
-        for (p = input; p < input + len; ++p) {
+        strcpy(temp, input);
+        
+        for (p = input, t = temp; p < input + len; ++p, ++t) {
             *p ^= key;
+            *t = *p;
+            if (isupper(*p))
+                *p = tolower(*p);
+            if (*p == '\0') {
+                abend = true;
+                break;
+            }
         }
-       
+        
+        if (abend) {
+            abend = false;
+            continue;
+        }
+        
         if (string_decrypts(input, len)) {
-            strcpy(orig, input);
+            strcpy(orig, temp);
             free(input);
             return key;
         }
@@ -111,7 +110,7 @@ int bruteforce(char *orig, int len)
 
 bool string_decrypts(char *input, int len)
 {
-    int i, n;
+    int i, j, n;
     char *token = malloc(sizeof(char) * len);
 
     for (i = 0; i < len; i += n + 1) {
