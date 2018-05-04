@@ -99,6 +99,7 @@ int bruteforce(char *orig, int len)
         
         if (string_decrypts(input, len)) {
             strcpy(orig, temp);
+            free(temp);
             free(input);
             return key;
         }
@@ -106,6 +107,7 @@ int bruteforce(char *orig, int len)
         strcpy(input, orig);
     }
     
+    free(temp);
     free(input);
     return -1; 
 }
