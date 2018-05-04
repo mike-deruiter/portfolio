@@ -106,8 +106,10 @@ void read_process_words(FILE *input, void do_work(char *t)) {
 void insert_word(char *token) {
     char *p;
     int l = strlen(token);
+    
     for (p = token; p < token + l; ++p)
         *p = tolower(*p);
+
     sort(token, strlen(token));
     hash_insert(token);
 }
