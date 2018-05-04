@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <ctype.h>
 
 // if we're using c99 or later, include stdbool.h; otherwise, roll our own
 #if __STDC_VERSION__ >= 199901L
@@ -103,6 +104,10 @@ void read_process_words(FILE *input, void do_work(char *t)) {
 
 /* insert_word */
 void insert_word(char *token) {
+    char *p;
+    int l = strlen(token);
+    for (p = token; p < token + l; ++p)
+        *p = tolower(*p);
     sort(token, strlen(token));
     hash_insert(token);
 }
