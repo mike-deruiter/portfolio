@@ -81,13 +81,15 @@ int bruteforce(char *orig, int len)
         
         for (p = input, t = temp; p < input + len; ++p, ++t) {
             *p ^= key;
-            *t = *p;
-            if (isupper(*p))
-                *p = tolower(*p);
+            
             if (*p == '\0') {
                 abend = true;
                 break;
             }
+            
+            *t = *p;
+            if (isupper(*p))
+                *p = tolower(*p);
         }
         
         if (abend) {
@@ -120,6 +122,8 @@ bool string_decrypts(char *input, int len)
         n = strlen(token);
         input += n + 1;
     }
+ 
+    free(token);
     
     return true;
 }
