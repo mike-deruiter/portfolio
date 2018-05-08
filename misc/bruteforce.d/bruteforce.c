@@ -49,9 +49,11 @@ int main(int argc, char *argv[])
     
     len = getline(&line, &lb, stdin);
     // resize & chomp
-    --len;
-    line = realloc(line, sizeof(char) * len);
-    line[len] = '\0';
+    if (line[len] == '\n') {
+        --len;
+        line = realloc(line, sizeof(char) * len);
+        line[len] = '\0';
+    }
     
     if ((key = bruteforce(line, len)) != -1) {
         fprintf(stderr, "Key Found: %d\nDecrypted Message: %s\n", key, line);
