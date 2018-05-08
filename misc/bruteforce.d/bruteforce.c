@@ -1,8 +1,7 @@
 /* bruteforce - encrypt input w/ single-byte XOR & then decrypt it w/ brute
    force. 
    
-   TODO: Make case-insensitive
-   TODO: Split into 2 programs                                              */
+   TODO: Allow multi-line input                                             */
 
 #include <stdio.h>
 #include <stdlib.h>
