@@ -31,6 +31,7 @@ bool hash_contains(char *s);
 void hash_insert(char *s);
 
 void sort(char a[], int s);
+void strip_path(char **s);
 
 typedef struct hash_node {
     long key;
@@ -40,17 +41,28 @@ typedef struct hash_node {
 hash_node *hash_array[HASH_SIZE];
 
 int main(int argc, char *argv[]) {
-    int i;
+    FILE *input;
 
     init_hash();
 
-    if (argc == 1) {
-        fprintf(stderr, "jumble: 1 or more arguments required\n");
-    } else {
-        for (i = 1; i < argc; ++i) {
-            insert_word(argv[i]);
+    // remove leading ".*/" from argv[0], becomes just the program name
+    strip_path(&argv[0]); 
+
+    if (argc > 1) {
+        int i;
+        for (i = 1; argc-- > 1; ++i) {
+            input = fopen(argv[i], "r");
+
+            if (input == NULL) {
+                printf("%s: cannot open %s\n", argv[0], argv[i]);
+                return 1;
+            }
+
+            read_process_words(input, insert_word);
+            fclose(input);
         }
-    }
+    } else
+        read_process_words(stdin, insert_word);
 
     FILE *dict = fopen(DICT, "r");
 
@@ -194,4 +206,14 @@ void sort(char a[], int sz)
         // swap
         temp = a[min]; a[min] = a[i]; a[i] = temp;
     }
+}
+
+/* strip_path */
+void strip_path(char **name) {
+    int i;
+
+    for (i = strlen(*name); i > 0 && (*name)[i - 1] != '/'; --i)
+        ;
+
+    *name += i;
 }
