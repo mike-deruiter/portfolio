@@ -27,13 +27,13 @@ void print_expression();
 bool is_operator(int i);
 
 // class for storing the postfix expression
-class int_array_stack {
+class Int_array_stack {
     private:
         int* stack;
         int top;
         int size;
     public:
-        int_array_stack(int s) {
+        Int_array_stack(int s) {
             size = s;
             stack = new int[size];
             top = -1;
@@ -56,7 +56,7 @@ class int_array_stack {
 
 // global variables
 oper operators[NUM_DIGITS - 1];
-int_array_stack postfix((NUM_DIGITS * 2) - 1);
+Int_array_stack postfix((NUM_DIGITS * 2) - 1);
 
 // main method
 int main() {
