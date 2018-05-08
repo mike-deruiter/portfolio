@@ -11,9 +11,6 @@
 #        useradd command seems to work differently (doesn't add home
 #        directories, etc.)
 
-#TODO: When there's an error adding a user, print it to stderr
-#TODO: Don't allow zero arguments
-
 import os, sys, subprocess, pwd, string, re, fileinput, random
 
 PROGNAME = os.path.split(sys.argv[0])[1]
@@ -80,7 +77,10 @@ def resolve_username(name):
             name += str(duplicate_count)
 
 if os.geteuid() != 0:
-    show_usage("%s must be run as root." % (PROGNAME))
+    show_usage("%s: must be run as root." % (PROGNAME))
+    
+if len(sys.argv) == 1:
+    show_usage("%s: 1 or more arguments required; you supplied 0." % (PROGNAME))
     
 names = gen_name_list()
 formatted_names = list()
@@ -124,6 +124,7 @@ for user in formatted_names:
         if shell("echo %s:%s | chpasswd" % (user, randompw)) == 0:
             print("%-8s : %s" % (user, randompw))
         else:
-            print("%-8s : <error initializing password>" % (user))
+            print("%-8s : <error initializing password>" % (user), 
+                  file=sys.stderr)
     else:
         print("%-8s : <error adding user>" % (user))
