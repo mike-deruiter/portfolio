@@ -71,9 +71,9 @@ int main()
     nostrat_percent *= 100;
 
     // print output
-    printf("The computer won %6.2f%% of the time while following the "
+    printf("The computer won %5.2f%% of the time while following the "
            "strategy.\n", strat_percent);
-    printf("The computer won %6.2f%% of the time while not following the "
+    printf("The computer won %5.2f%% of the time while not following the "
            "strategy.\n", nostrat_percent);
 
     return 0;
