@@ -133,11 +133,6 @@ class MapNode {
         this.next = next;
     }
 
-    // default constructor
-    MapNode() {
-        this(0, null);
-    }
-
     public long getKey() {
         return key;
     }
