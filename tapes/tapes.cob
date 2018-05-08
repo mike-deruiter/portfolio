@@ -12,7 +12,7 @@
                 ASSIGN TO "/tmp/TAPES.DAT"
                 ORGANIZATION IS LINE SEQUENTIAL.
             SELECT OP-COLLECTION
-                ASSIGN TO "/tmp/tape-collection"
+                ASSIGN TO DISPLAY
                 ORGANIZATION IS LINE SEQUENTIAL.
             SELECT SW-TAPES
                 ORGANIZATION IS LINE SEQUENTIAL.
@@ -58,7 +58,7 @@
                 88  EOF-IP-TAPES              VALUE "Y".            
         
        01  WS-AVERAGES.
-            05  WS-AVG-TAPE-RATE        PIC 999V99 VALUE ZERO.
+            05  WS-AVG-TAPE-RATING      PIC 999V99 VALUE ZERO.
             05  WS-AVG-TAPE-VAL         PIC 9999V99 VALUE ZERO.
         
        01  WS-TEMPORARY.
@@ -156,11 +156,12 @@
        OB1000-SETUP.
             OPEN OUTPUT OP-COLLECTION.
 
-            WRITE OP-COLLECTION-REC FROM TITLE-1.
+            WRITE OP-COLLECTION-REC FROM TITLE-1
+                BEFORE ADVANCING 1 LINE.
             WRITE OP-COLLECTION-REC FROM HEADER-1
-                AFTER ADVANCING 1 LINES.
+                BEFORE ADVANCING 1 LINE.
             WRITE OP-COLLECTION-REC FROM HEADER-DASHES
-                AFTER ADVANCING 1 LINE.
+                BEFORE ADVANCING 1 LINE.
 
             MOVE SPACES TO OP-COLLECTION-REC.
 
@@ -187,7 +188,7 @@
             ADD  1                      TO A-YEAR-TAPE-NUM.
 
             WRITE OP-COLLECTION-REC
-                AFTER ADVANCING 1 LINE.
+                BEFORE ADVANCING 1 LINE.
 
             MOVE SPACES                 TO OP-TAPE-YEAR.
 
@@ -207,28 +208,28 @@
             MOVE WS-PREV-YEAR           TO YT-YEAR.
             
             WRITE OP-COLLECTION-REC FROM FOOTER-DASHES
-                AFTER ADVANCING 1 LINE.
+                BEFORE ADVANCING 1 LINE.
             WRITE OP-COLLECTION-REC FROM YEAR-AVERAGE-REC
-                AFTER ADVANCING 1 LINE.
+                BEFORE ADVANCING 1 LINE.
             WRITE OP-COLLECTION-REC FROM YEAR-TOTAL-REC
-                AFTER ADVANCING 1 LINE.
+                BEFORE ADVANCING 1 LINE.
                 
             MOVE SPACES                 TO OP-COLLECTION-REC.
             
             WRITE OP-COLLECTION-REC
-                AFTER ADVANCING 1 LINE.
+                BEFORE ADVANCING 1 LINE.
                 
        OC3000-PRINT-GRAND-TOTAL-AVG.
             PERFORM OD2000-CALC-GRAND-TOTAL-AVG.
             
             WRITE OP-COLLECTION-REC FROM GRAND-TOTAL-AVG-DASHES
-                AFTER ADVANCING 1 LINE.
+                BEFORE ADVANCING 1 LINE.
             WRITE OP-COLLECTION-REC FROM GRAND-TOTAL-AVG-DASHES
-                AFTER ADVANCING 1 LINE.
+                BEFORE ADVANCING 2 LINES.
             WRITE OP-COLLECTION-REC FROM GRAND-AVERAGE-REC
-                AFTER ADVANCING 2 LINES.
+                BEFORE ADVANCING 1 LINE.
             WRITE OP-COLLECTION-REC FROM GRAND-TOTAL-REC
-                AFTER ADVANCING 1 LINE.
+                BEFORE ADVANCING 1 LINE.
 
             MOVE SPACES                 TO OP-COLLECTION-REC.
                 
@@ -236,16 +237,16 @@
             MOVE A-YEAR-TAPE-VALUE      TO YT-TAPE-VALUE.
             
             MOVE A-YEAR-TAPE-VALUE      TO WS-AVG-TAPE-VAL.
-            MOVE A-YEAR-TAPE-RATING     TO WS-AVG-TAPE-RATE.
+            MOVE A-YEAR-TAPE-RATING     TO WS-AVG-TAPE-RATING.
             
             DIVIDE A-YEAR-TAPE-NUM INTO WS-AVG-TAPE-VAL
                 GIVING YA-TAPE-VALUE.
-            DIVIDE A-YEAR-TAPE-NUM INTO WS-AVG-TAPE-RATE
+            DIVIDE A-YEAR-TAPE-NUM INTO WS-AVG-TAPE-RATING
                 GIVING YA-TAPE-RATING.
                 
             ADD  A-YEAR-TAPE-VALUE      TO A-TOTAL-TAPE-VALUE.
             ADD  A-YEAR-TAPE-RATING     TO A-TOTAL-TAPE-RATING.
-            ADD  1                      TO A-TOTAL-TAPE-NUM.
+            ADD  A-YEAR-TAPE-NUM        TO A-TOTAL-TAPE-NUM.    
                 
             MOVE ZEROES                 TO A-YEAR-TAPE-VALUE.
             MOVE ZEROES                 TO A-YEAR-TAPE-RATING.
@@ -256,9 +257,9 @@
             MOVE A-TOTAL-TAPE-VALUE TO GT-TAPE-VALUE.
             
             MOVE A-TOTAL-TAPE-VALUE     TO WS-AVG-TAPE-VAL.
-            MOVE A-TOTAL-TAPE-RATING    TO WS-AVG-TAPE-RATE.
+            MOVE A-TOTAL-TAPE-RATING    TO WS-AVG-TAPE-RATING.
             
             DIVIDE A-TOTAL-TAPE-NUM INTO WS-AVG-TAPE-VAL
                 GIVING GA-TAPE-VALUE.
-            DIVIDE A-TOTAL-TAPE-NUM INTO WS-AVG-TAPE-RATE
+            DIVIDE A-TOTAL-TAPE-NUM INTO WS-AVG-TAPE-RATING
                 GIVING GA-TAPE-RATING.
