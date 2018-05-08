@@ -21,8 +21,7 @@ def show_usage(message, code=1):
     sys.exit(code)
     
 def shell(command):
-    proc = subprocess.Popen("useradd {0} 2>/dev/null".format(user),
-                            shell=True)
+    proc = subprocess.Popen(command)
     proc.wait()
     
     return proc.returncode
