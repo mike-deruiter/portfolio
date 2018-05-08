@@ -22,6 +22,13 @@ def show_usage(message, code=1):
     print(message)
     print("Usage: %s file" % (sys.argv[0]))
     sys.exit(code)
+    
+def shell(command):
+    proc = subprocess.Popen("useradd {0} 2>/dev/null".format(user),
+                            shell=True)
+    proc.wait()
+    
+    return proc.returncode
 
 def gen_name_list():
     names = list()
@@ -111,18 +118,10 @@ for user in names:
     prev = curr
     
 for user in formatted_names:
-    useradd = subprocess.Popen("useradd {0} 2>/dev/null".format(user),
-                               shell=True)
-    useradd.wait()
-    
-    if useradd.returncode == 0:
+    if shell("useradd {0} 2>/dev/null".format(user)) == 0:
         randompw = random_passwd()
         
-        passwd_proc = subprocess.Popen("echo {0}:{1} | chpasswd".
-                                       format(user, randompw), shell=True)
-        passwd_proc.wait()
-        
-        if passwd_proc.returncode == 0:
+        if shell("echo {0}:{1} | chpasswd".format(user, randompw)) == 0:
             print("%-8s : %s" % (user, randompw))
         else:
             print("%-8s : <error initializing password>" % (user))
