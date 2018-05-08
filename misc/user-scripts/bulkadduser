@@ -118,10 +118,10 @@ for user in names:
     prev = curr
     
 for user in formatted_names:
-    if shell("useradd {0} 2>/dev/null".format(user)) == 0:
+    if shell("useradd %s 2>/dev/null" % (user)) == 0:
         randompw = random_passwd()
         
-        if shell("echo {0}:{1} | chpasswd".format(user, randompw)) == 0:
+        if shell("echo %s:%s | chpasswd" % (user, randompw)) == 0:
             print("%-8s : %s" % (user, randompw))
         else:
             print("%-8s : <error initializing password>" % (user))
