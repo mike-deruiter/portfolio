@@ -1,38 +1,12 @@
 /* jumble - takes jumbled words as arguments & compares them to
- * /usr/share/dict/words, outputting all the words that the arguments
- * unscramble to.
- *  
- * Copyright (c) 2017, Mike DeRuiter. All rights reserved.
- * Send bugs to: aynrandjuggalo@gmail.com
- *
- * Redistribution and use in source and binary forms, with or without 
- * modification, are permitted provided that the following condition is met:
- *   1) Redistributions of source code (if you're distributing a binary you
- *      don't have to bother. This source is potentially interesting for 
- *      educational purposes but the program itself is hardly the GNU 
- *      compiler) must retain the above copyright notice (please remove the 
- *      bit about sending bug reports to me), this list of one whole 
- *      condition (including the funny parts) & the following disclaimer:
- * 
- * THIS SOFTWARE IS PROVIDED BY THE AUTHOR AND CONTRIBUTORS ''AS IS'' AND ANY 
- * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED 
- * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE 
- * DISCLAIMED. IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE FOR ANY 
- * DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES 
- * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR 
- * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER 
- * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT 
- * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY 
- * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF 
- * SUCH DAMAGE.                                                               
- *
- * THIS DISCLAIMER HAS SUPER COW POWERS. (You have to include this part too
- * b/c it's funny to me)                                                      */
+   /usr/share/dict/words, outputting all the words that the arguments
+   unscramble to.                                                     */
 
 #include <iostream>
 #include <fstream>
 #include <vector>
 #include <algorithm>
+using namespace std;
 
 // constants
 constexpr int SIZE = 20; // size of the array of nodes
@@ -40,7 +14,7 @@ constexpr const char* DICTIONARY = "/usr/share/dict/words"; /* location of
                                                                dictionary  */
 
 // function prototypes
-std::string jumble_word(std::string word);
+string jumble_word(string word);
 
 // user-defined types
 class Word_map {
@@ -51,7 +25,7 @@ class Word_map {
             struct map_node *next;
         };
 
-        map_node** map;
+        struct map_node** map;
         int size;
 
         unsigned long convert_to_key(std::string k);
@@ -62,47 +36,47 @@ class Word_map {
                 map[i] = nullptr;
         }
 
-        void insert(std::string k);
-        bool contains(std::string k);
+        void insert(string k);
+        bool contains(string k);
 };
 
 // main
 int main(int argc, char** argv)
 {
-    std::vector<std::string> words_presort;
+    vector<string> words_presort;
     Word_map word_map(SIZE);
 
     // get the words to unscramble from the arguments
     if (argc == 1) {
-        std::cerr << argv[0] << ": 1 or more arguments expected." << std::endl;
+        cerr << argv[0] << ": 1 or more arguments expected." << endl;
         return 1;
     } else {
         for (int i = 1; argc-- > 1; ++i) {
-            std::string word {argv[i]};
+            string word {argv[i]};
             words_presort.push_back(word);
         }
     }
 
     // sort the characters in the words alphabetically & add them to the map
-    for (std::string word : words_presort) {
-        std::string word_sort {jumble_word(word)};
+    for (string word : words_presort) {
+        string word_sort {jumble_word(word)};
         word_map.insert(word_sort);
     }
 
-    std::ifstream dict(DICTIONARY, std::ifstream::in); // open the dictionary
-    std::string dict_word;
+    ifstream dict(DICTIONARY, ifstream::in); // open the dictionary
+    string dict_word;
 
     if (! dict) {
-        std::cerr << argv[0] << ": cannot open dictionary." << std::endl;
+        cerr << argv[0] << ": cannot open dictionary." << endl;
         return 2;
     }
      
     /* sort the characters in each dictionary word alphabetically & compare 
        them to the map                                                      */ 
     while (dict >> dict_word) {
-        std::string word_sort {jumble_word(dict_word)};
+        string word_sort {jumble_word(dict_word)};
         if (word_map.contains(word_sort)) {
-            std::cout << dict_word << std::endl;
+            cout << dict_word << endl;
         }
     }
 
@@ -112,15 +86,15 @@ int main(int argc, char** argv)
 }
 
 /* jumble_word - sort the characters in a word into alphabetic order. */
-std::string jumble_word(std::string word) {
+string jumble_word(string word) {
     char* jumble = (char*) word.c_str();
-    std::sort(jumble, jumble + word.length());
-    std::string word_sort {jumble};
+    sort(jumble, jumble + word.length());
+    string word_sort {jumble};
     return word_sort;
 }
 
 /* convert_to_key - convert a string to a map key. */
-unsigned long Word_map::convert_to_key(std::string s) {
+unsigned long Word_map::convert_to_key(string s) {
     char* sk = (char*) s.c_str();
     unsigned long key = 0;
     char c;
@@ -132,7 +106,7 @@ unsigned long Word_map::convert_to_key(std::string s) {
 }
 
 /* insert - insert a string into the map. */
-void Word_map::insert(std::string s) {
+void Word_map::insert(string s) {
     unsigned long key = convert_to_key(s);
 
     struct map_node* i = new struct map_node;
@@ -154,7 +128,7 @@ void Word_map::insert(std::string s) {
 }
 
 /* contains - check whether the map contains a string. */
-bool Word_map::contains(std::string s) {
+bool Word_map::contains(string s) {
     unsigned long key = convert_to_key(s);
     int code = key % size;
 
