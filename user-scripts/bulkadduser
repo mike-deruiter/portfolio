@@ -7,9 +7,9 @@
 #   greater than or equal to 01. Then, add the users to the system. Usernames
 #   are guaranteed not to conflict w/ pre-existing users or each other.
 
-# Notes: Works perfectly on Red Hat systems, but when tested on Ubuntu the
-#        useradd command seems to work differently (doesn't add home
-#        directories, etc.)
+# NOTE: Works perfectly on Red Hat systems, but when tested on Ubuntu the
+#       useradd command seems to work differently (doesn't add home
+#       directories, etc.)
 
 import os, sys, subprocess, pwd, string, re, fileinput, random
 
@@ -61,7 +61,7 @@ def resolve_username(name):
     while True:
         if not name in formatted_names:
             try:
-                checkname = pwd.getpwnam(name)
+                pwd.getpwnam(name)
             except KeyError:
                 return name
                 
@@ -123,7 +123,6 @@ for user in formatted_names:
         if shell("echo %s:%s | chpasswd" % (user, randompw)) == 0:
             print("%-8s : %s" % (user, randompw))
         else:
-            print("%-8s : <error initializing password>" % (user), 
-                  file=sys.stderr)
+            print("%-8s : <error initializing password>" % (user))
     else:
         print("%-8s : <error adding user>" % (user))
