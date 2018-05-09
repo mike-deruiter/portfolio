@@ -1,4 +1,4 @@
-#!/usr/bin/ruby
+#!/usr/bin/python
 
 # user2alph
 # Changes all usernames that have a number at the end to have letters at the 
@@ -8,48 +8,75 @@
 #       test27 -> testAA
 #       test28 -> testAB
 
+# NOTE: Only tested on Ubuntu systems
 
-passwd = File.open("/etc/passwd", "r")
+import os, sys, subprocess, pwd, re
 
-names = Array.new
+PROGNAME = os.path.split(sys.argv[0])[1]
 
-passwd.each do |line|
+def show_usage(message, code=1):
+    print(message)
+    print("Usage: %s file" % (sys.argv[0]))
+    sys.exit(code)
+
+def shell(command):
+    proc = subprocess.Popen(command, shell=True)
+    proc.wait()
+    
+    return proc.returncode
+
+if os.geteuid() != 0:
+    show_usage("%s: must be run as root." % (PROGNAME))
+
+passwd = open("/etc/passwd", "r")
+
+names = []
+re_num_at_end = re.compile(r'([^0-9]*)([0-9]+)$')
+
+for line in passwd:
     fields = line.split(":")
     
-    if (fields[2].to_i >= 1000 && fields[0] =~ /[0-9]$/)
-        names.push fields[0]
-    end
-end
+    rematch_username = re_num_at_end.match(fields[0])
+    
+    if int(fields[2]) >= 1000 and rematch_username:
+        names.append(fields[0])
 
-names.each do |name|
-    name =~ /([0-9]+)$/
+for name in names:
+    rematch_username = re_num_at_end.match(name)
+    basename = rematch_username.group(1)
+    num_at_end = int(rematch_username.group(2))
     
-    alpha = Array.new
-    i = $1.to_i
+    alpha = []
+    i = num_at_end
     
-    while (i > 0)
-        alpha.push ('A'.ord + (i - 1) % 26).chr
+    while i > 0:
+        alpha.append(chr(ord('A') + ((i - 1) % 26)))
         
-        if (i % 26 == 0)
+        if i % 26 == 0:
             i -= 26
-        end
-        
+            
         i /= 26
-    end
+   
+    if num_at_end == 0:
+        alpha.append('a')
+        
+    if num_at_end < 26:
+        alpha.append('_')
+        
+    alpha.reverse()
     
-    if ($1.to_i == 0)
-        alpha.push 'a'
-    end
+    newname = basename + ''.join(alpha)
     
-    if ($2.to_i < 26)
-        alpha.push '_'     
-    end
-    
-    alpha.reverse!
-    
-    newname = $` + alpha.join('')
-    
-    system("usermod -l #{newname} #{name}")
-    system("usermod -d /home/#{newname} -m #{newname}")
-    system("groupmod -n #{newname} #{name}")
-end
+    try:
+        pwd.getpwnam(newname)
+        print("%-8s : <error renaming user>" % (name))
+    except KeyError:
+        if shell("usermod -d /home/%s -m %s" % (newname, name)) == 0:
+            if shell("groupmod -n %s %s" % (newname, name)) == 0:
+                shell("usermod -l %s %s" % (newname, name))
+                print("%-8s : %s" % (name, newname))
+            else:
+                shell("usermod -d /home/%s -m %s" % (name, name))
+                print("%-8s : <error renaming user>" % (name))
+        else:
+            print("%-8s : <error renaming user>" % (name))
