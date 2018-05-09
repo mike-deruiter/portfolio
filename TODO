@@ -1,5 +1,0 @@
-# Fix read_process_words() in jumble.c
-# Add case insensitivity to bruteforce.c
-# Prune most of the comments in montyhall.c
-# Add comments to packets.c
-# Add explanatory heading to study
