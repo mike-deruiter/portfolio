@@ -80,6 +80,11 @@ def append_number(name, number):
     return name
     
 def resolve_username(name):
+    '''resolve_username
+    
+    Keep checking if a username exists, incrementing the number at the end by
+    1 each time, until a novel login is found
+    '''
     re_number_at_end = re.compile(r'^[^\d]*(\d+)$')
     while True:
         if not name in formatted_names:
