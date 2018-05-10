@@ -63,8 +63,6 @@
         
        01  WS-TEMPORARY.
             05  WS-PREV-YEAR            PIC X(04) VALUE ALL SPACES.
-            05  WS-BEST-YEAR            PIC 9V99 VALUE 5.
-            05  WS-WORST-YEAR           PIC 9V99 VALUE 0.
         
        01  YEAR-AVERAGE-REC.
             05                          PIC X(06) VALUE ALL SPACES.
