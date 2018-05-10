@@ -1,5 +1,4 @@
 #!/bin/bash
-#TODO: Allow multiline answers
 
 set -eu
 
