@@ -1,5 +1,7 @@
 #!/usr/bin/python3
 
+DEBUG = False
+
 # bulkadduser
 # Usage: bulkadduser [FILES...]
 # Take a list of real names of the format "[FIRSTNAME ][MIDDLENAME ]LASTNAME" &
@@ -21,12 +23,14 @@ def show_usage(message, code=1):
     sys.exit(code)
     
 def shell(command):
-    #proc = subprocess.Popen(command, shell=True)
-    #proc.wait()
-    #return proc.returncode
-    print(command) # DEBUG
-    return 0       # DEBUG
-
+    if not DEBUG:
+        proc = subprocess.Popen(command, shell=True)
+        proc.wait()
+        return proc.returncode
+    else:
+        print(command) # DEBUG
+        return 0       # DEBUG
+    
 def gen_name_list():
     '''gen_name_list
     
@@ -84,11 +88,8 @@ def resolve_username(name):
             except KeyError:
                 return name
             
-            duplicate_count = int(re_number_at_end.match(name).group(1)) + 1
-            name = append_number(name, duplicate_count)
-        else:
-            duplicate_count = int(re_number_at_end.match(name).group(1)) + 1
-            name = append_number(name, duplicate_count)
+        duplicate_count = int(re_number_at_end.match(name).group(1)) + 1
+        name = append_number(name, duplicate_count)
             
 # Start of script ##############################################################
 
@@ -108,7 +109,7 @@ curr = ""
 prev = ""
 
 for user in names:
-    re_username = re.compile(r'^((\w)\w* )?((\w)\w* )?(\w{1,4})\w*$')
+    re_username = re.compile(r'^((\w)\w* )?((\w)\w* )?((\w)\w* )*(\w{1,4})\w*$')
     
     rematch_username = re_username.match(user)
     
@@ -116,10 +117,10 @@ for user in names:
         print("%s : <error adding user (invalid name)>" % (user))
         continue
     
-    name = rematch_username.group(5)
-    if rematch_username.group(2):
+    name = rematch_username.group(7) # Last name
+    if rematch_username.group(2): # First initial
         name += rematch_username.group(2)
-    if rematch_username.group(4):
+    if rematch_username.group(4): # Middle initial
         name += rematch_username.group(4)
         
     curr = name
