@@ -3,7 +3,8 @@
 set -eu
 
 PROGNAME=$(echo $0 | sed s#^.*/##)
-FLASHCARD_DIR=$HOME/Documents/Flashcards
+FLASHCARD_DIR="."
+#FLASHCARD_DIR=$HOME/Documents/Flashcards
 
 # pick - adapted from THE UNIX PROGRAMMING ENVIRONMENT
 #        by Brian Kernighan & Rob Pike
