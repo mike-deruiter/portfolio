@@ -119,7 +119,7 @@ for user in names:
     rematch_username = re_username.match(user)
     
     if not rematch_username:
-        print("%s : <error adding user (invalid name)>" % (user))
+        print("%s : <invalid name>" % (user))
         continue
     
     name = rematch_username.group(7) # Last name
