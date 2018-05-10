@@ -5,6 +5,8 @@
 # line using t, a Ruby program which is not written by me & a pain in the ass to
 # connect to your account.
 
+# NOTE: bash-specific
+
 # pick - adapted from THE UNIX PROGRAMMING ENVIRONMENT
 #        by Brian Kernighan & Rob Pike
 pick() {
@@ -37,7 +39,6 @@ elif [ $# -eq 2 ]; then
     exit 1
 fi
 
-# Is =~ part of test? I remember this script working but this looks weird
 if [[ $# -eq 1 && "$1" =~ $regex ]]; then
     t $zone -n $1 -l | 
     awk '{ printf "%s|%s|", $5, $1; 
