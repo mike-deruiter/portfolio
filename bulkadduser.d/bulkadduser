@@ -1,7 +1,5 @@
 #!/usr/bin/python3
 
-DEBUG = False
-
 # bulkadduser
 # Usage: bulkadduser [FILES...]
 # Take a list of real names of the format "[FIRSTNAME ][MIDDLENAME ]LASTNAME" &
@@ -12,6 +10,8 @@ DEBUG = False
 # NOTE: Works perfectly on Red Hat systems, but when tested on Ubuntu the
 #       useradd command seems to work differently (doesn't add home
 #       directories, etc.)
+
+DEBUG = False
 
 import os, sys, subprocess, pwd, string, re, fileinput, random
 
