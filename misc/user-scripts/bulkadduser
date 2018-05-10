@@ -13,7 +13,7 @@
 
 import os, sys, subprocess, pwd, string, re, fileinput, random
 
-PROGNAME = os.path.split(sys.argv[0])[1]
+# Function defintions ##########################################################
 
 def show_usage(message, code=1):
     print(message)
@@ -21,20 +21,30 @@ def show_usage(message, code=1):
     sys.exit(code)
     
 def shell(command):
-    proc = subprocess.Popen(command)
-    proc.wait()
-    
-    return proc.returncode
+    #proc = subprocess.Popen(command, shell=True)
+    #proc.wait()
+    #return proc.returncode
+    print(command) # DEBUG
+    return 0       # DEBUG
 
 def gen_name_list():
-    names = list()
+    '''gen_name_list
+    
+    Read the files specified as arguments & create a list of names for further 
+    processing.
+    '''
+    names = []
     
     try:
-        for line in fileinput.input():        
+        for line in fileinput.input():
+            # Compress whitespace, strip leading & trailing whitespace, remove
+            # all non-alphabetic, non-whitespace characters & convert to
+            # lowercase        
             line = re.sub('\s+', ' ', line)
             line = line.strip()
             line = re.sub('[^a-zA-Z ]', '', line)
             line = line.lower()
+            # Add to list
             names.append(line)
     except IOError:
         show_usage("%s: Invalid filename in arguments" % (sys.argv[0]))
@@ -44,36 +54,45 @@ def gen_name_list():
     return names
     
 def random_passwd():
+    '''random_passwd
+    
+    Return an random 8-character string of alphanumeric characters
+    '''
     return ''.join( random.choice(string.ascii_lowercase + 
                                   string.ascii_uppercase +
                                   string.digits) for _ in range(8) )
 
-def append_number(name):
+def append_number(name, number):
+    '''append_number
+    
+    Replace the number at the end of a string w/ a new number
+    '''
     name = re.sub("\d+$", "", name)
     
-    if duplicate_count < 10:
+    if number < 10:
         name += "0"
-    name += str(duplicate_count)
+    name += str(number)
     
     return name
     
 def resolve_username(name):
+    re_number_at_end = re.compile(r'^[^\d]*(\d+)$')
     while True:
         if not name in formatted_names:
             try:
                 pwd.getpwnam(name)
             except KeyError:
                 return name
-                
-            re_number_at_end = re.compile(r'^[^\d]*(\d+)$')
             
             duplicate_count = int(re_number_at_end.match(name).group(1)) + 1
+            name = append_number(name, duplicate_count)
+        else:
+            duplicate_count = int(re_number_at_end.match(name).group(1)) + 1
+            name = append_number(name, duplicate_count)
             
-            name = re.sub("\d+$", "", name)
-    
-            if duplicate_count < 10:
-                name += "0"
-            name += str(duplicate_count)
+# Start of script ##############################################################
+
+PROGNAME = os.path.split(sys.argv[0])[1]
 
 if os.geteuid() != 0:
     show_usage("%s: must be run as root." % (PROGNAME))
@@ -82,10 +101,9 @@ if len(sys.argv) == 1:
     show_usage("%s: 1 or more arguments required; you supplied 0." % (PROGNAME))
     
 names = gen_name_list()
-formatted_names = list()
+formatted_names = []
 
 duplicate_count = 1
-
 curr = ""
 prev = ""
 
@@ -95,6 +113,7 @@ for user in names:
     rematch_username = re_username.match(user)
     
     if not rematch_username:
+        print("%s : <error adding user (invalid name)>" % (user))
         continue
     
     name = rematch_username.group(5)
@@ -110,7 +129,7 @@ for user in names:
     else:
         duplicate_count = 1
         
-    name = append_number(name)
+    name = append_number(name, duplicate_count)
     name = resolve_username(name)
     
     formatted_names.append(name)
