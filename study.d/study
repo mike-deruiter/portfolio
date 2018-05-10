@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 set -eu
 
@@ -30,7 +30,7 @@ files=""
 for i in $@; do
     if [ ! -e $FLASHCARD_DIR/$i ]; then
         echo "$PROGNAME: Flashcards not found." 1>&2
-        exit 1
+        exit 2
     fi
     files="$FLASHCARD_DIR/$i "$files
 done
