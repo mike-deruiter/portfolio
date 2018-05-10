@@ -63,6 +63,8 @@
         
        01  WS-TEMPORARY.
             05  WS-PREV-YEAR            PIC X(04) VALUE ALL SPACES.
+            05  WS-BEST-YEAR            PIC 9V99 VALUE 5.
+            05  WS-WORST-YEAR           PIC 9V99 VALUE 0.
         
        01  YEAR-AVERAGE-REC.
             05                          PIC X(06) VALUE ALL SPACES.
@@ -158,6 +160,8 @@
 
             WRITE OP-COLLECTION-REC FROM TITLE-1
                 BEFORE ADVANCING 2 LINES.
+            WRITE OP-COLLECTION-REC FROM GRAND-TOTAL-AVG-DASHES
+                BEFORE ADVANCING 2 LINES.
             WRITE OP-COLLECTION-REC FROM HEADER-1
                 BEFORE ADVANCING 1 LINE.
             WRITE OP-COLLECTION-REC FROM HEADER-DASHES
@@ -212,12 +216,9 @@
             WRITE OP-COLLECTION-REC FROM YEAR-AVERAGE-REC
                 BEFORE ADVANCING 1 LINE.
             WRITE OP-COLLECTION-REC FROM YEAR-TOTAL-REC
-                BEFORE ADVANCING 1 LINE.
+                BEFORE ADVANCING 2 LINES.
                 
             MOVE SPACES                 TO OP-COLLECTION-REC.
-            
-            WRITE OP-COLLECTION-REC
-                BEFORE ADVANCING 1 LINE.
                 
        OC3000-PRINT-GRAND-TOTAL-AVG.
             PERFORM OD2000-CALC-GRAND-TOTAL-AVG.
