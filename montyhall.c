@@ -36,7 +36,7 @@ typedef enum { false, true } bool;
 bool playgame(bool strategy);
 void init_doors();
 
-bool *doors;
+bool doors[DOORS];
 
 int main()
 {
@@ -49,8 +49,6 @@ int main()
 
     // seed the random number generator    
     srand(time(NULL));
-
-    doors = malloc(DOORS * sizeof(bool));
 
     // play the game 'iterations' times following the strategy.
     for (i = 0; i < ITERATIONS; ++i)
