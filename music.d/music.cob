@@ -34,36 +34,36 @@
        FD  OP-COLLECTION.
        01  OP-COLLECTION-REC.              
             05                          PIC X(06).
-            05  OP-MUSIC-YEAR            PIC X(04).
+            05  OP-MUSIC-YEAR           PIC X(04).
             05                          PIC X(03).
-            05  OP-MUSIC-ARTIST          PIC X(20).
+            05  OP-MUSIC-ARTIST         PIC X(20).
             05                          PIC X(02).
-            05  OP-MUSIC-TITLE           PIC X(20).
+            05  OP-MUSIC-TITLE          PIC X(20).
             05                          PIC X(03).
-            05  OP-MUSIC-VALUE           PIC $$$9.99.
+            05  OP-MUSIC-VALUE          PIC $$$9.99.
             05                          PIC X(05).
-            05  OP-MUSIC-RATING          PIC 9.99.
+            05  OP-MUSIC-RATING         PIC 9.99.
 
        WORKING-STORAGE SECTION.
        01  WS-ACCUMULATORS.
-            05  A-TOTAL-MUSIC-VALUE      PIC 9999V99 VALUE ZERO.
-            05  A-TOTAL-MUSIC-RATING     PIC 999V99 VALUE ZERO.
-            05  A-TOTAL-MUSIC-NUM        PIC 9999 VALUE ZERO.
-            05  A-YEAR-MUSIC-VALUE       PIC 9999V99 VALUE ZERO.
-            05  A-YEAR-MUSIC-RATING      PIC 999V99 VALUE ZERO.
-            05  A-YEAR-MUSIC-NUM         PIC 9999 VALUE ZERO.
+            05  A-TOTAL-MUSIC-VALUE     PIC 9999V99 VALUE ZERO.
+            05  A-TOTAL-MUSIC-RATING    PIC 999V99 VALUE ZERO.
+            05  A-TOTAL-MUSIC-NUM       PIC 9999 VALUE ZERO.
+            05  A-YEAR-MUSIC-VALUE      PIC 9999V99 VALUE ZERO.
+            05  A-YEAR-MUSIC-RATING     PIC 999V99 VALUE ZERO.
+            05  A-YEAR-MUSIC-NUM        PIC 9999 VALUE ZERO.
 
        01  WS-SWITCHES.
             05  EOF-IP-MUSIC-SW         PIC X VALUE "N".
                 88  EOF-IP-MUSIC              VALUE "Y".            
         
        01  WS-AVERAGES.
-            05  WS-AVG-MUSIC-RATING      PIC 999V99 VALUE ZERO.
-            05  WS-AVG-MUSIC-VAL         PIC 9999V99 VALUE ZERO.
+            05  WS-AVG-MUSIC-RATING     PIC 999V99 VALUE ZERO.
+            05  WS-AVG-MUSIC-VAL        PIC 9999V99 VALUE ZERO.
         
        01  WS-HIGHEST-LOWEST.
-            05  WS-HIGHEST-RATING   PIC 999V99 VALUE ZERO.
-            05  WS-LOWEST-RATING    PIC 999V99 VALUE 5.
+            05  WS-HIGHEST-RATING       PIC 999V99 VALUE ZERO.
+            05  WS-LOWEST-RATING        PIC 999V99 VALUE 5.
         
        01  WS-TEMPORARY.
             05  WS-PREV-YEAR            PIC X(04) VALUE ALL SPACES.
@@ -256,10 +256,10 @@
             MOVE SPACES                 TO OP-COLLECTION-REC.
                 
        OD1000-CALC-YEAR-TOTAL-AVG.
-            MOVE A-YEAR-MUSIC-VALUE      TO YT-MUSIC-VALUE.
+            MOVE A-YEAR-MUSIC-VALUE     TO YT-MUSIC-VALUE.
             
-            MOVE A-YEAR-MUSIC-VALUE      TO WS-AVG-MUSIC-VAL.
-            MOVE A-YEAR-MUSIC-RATING     TO WS-AVG-MUSIC-RATING.
+            MOVE A-YEAR-MUSIC-VALUE     TO WS-AVG-MUSIC-VAL.
+            MOVE A-YEAR-MUSIC-RATING    TO WS-AVG-MUSIC-RATING.
             
             DIVIDE A-YEAR-MUSIC-NUM INTO WS-AVG-MUSIC-VAL
                 GIVING YA-MUSIC-VALUE.
@@ -274,9 +274,9 @@
                 MOVE SW-MUSIC-YEAR      TO LY-YEAR
             END-IF.
                 
-            ADD  A-YEAR-MUSIC-VALUE      TO A-TOTAL-MUSIC-VALUE.
-            ADD  A-YEAR-MUSIC-RATING     TO A-TOTAL-MUSIC-RATING.
-            ADD  A-YEAR-MUSIC-NUM        TO A-TOTAL-MUSIC-NUM.    
+            ADD  A-YEAR-MUSIC-VALUE     TO A-TOTAL-MUSIC-VALUE.
+            ADD  A-YEAR-MUSIC-RATING    TO A-TOTAL-MUSIC-RATING.
+            ADD  A-YEAR-MUSIC-NUM       TO A-TOTAL-MUSIC-NUM.    
                 
             MOVE ZEROES                 TO A-YEAR-MUSIC-VALUE.
             MOVE ZEROES                 TO A-YEAR-MUSIC-RATING.
@@ -286,8 +286,8 @@
        OD2000-CALC-GRAND-TOTAL-AVG.
             MOVE A-TOTAL-MUSIC-VALUE TO GT-MUSIC-VALUE.
             
-            MOVE A-TOTAL-MUSIC-VALUE     TO WS-AVG-MUSIC-VAL.
-            MOVE A-TOTAL-MUSIC-RATING    TO WS-AVG-MUSIC-RATING.
+            MOVE A-TOTAL-MUSIC-VALUE    TO WS-AVG-MUSIC-VAL.
+            MOVE A-TOTAL-MUSIC-RATING   TO WS-AVG-MUSIC-RATING.
             
             DIVIDE A-TOTAL-MUSIC-NUM INTO WS-AVG-MUSIC-VAL
                 GIVING GA-MUSIC-VALUE.
