@@ -41,6 +41,7 @@ int main()
     while (cin >> frac_str) {
         if (!parse_fraction(frac_str, num, denom)) {
             cerr << frac_str << ": invalid" << endl;
+            continue;
         }
 
         fraction frac(num, denom);
