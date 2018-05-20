@@ -29,7 +29,7 @@ awk 'BEGIN { FS=";"
                 y = games[x]
                 z = x - 1
                 
-                while (z && games[z] > y)
+                while (z && playtime[games[z]] < playtime[y])
                     games[z + 1] = games[z--]
                    
                 games[z + 1] = y
