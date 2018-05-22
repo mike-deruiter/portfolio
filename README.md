@@ -10,7 +10,7 @@ Some programs are purely "academic exercises" while others serve modest utility.
 
 ## Languages Used
 
-Currently, there are programs in C, C++, Java, sh, Python, Ruby, & COBOL (Mike took a course). Files w/o a suffix are either scripts or sample data for said scripts; inspecting the files will reveal what they are.
+Currently, there are programs in C, C++, Java, Go, Python, Ruby, sh, & COBOL (Mike took a course). Files w/o a suffix are either scripts or sample data for said scripts; inspecting the files will reveal what they are.
 
 ---
 
