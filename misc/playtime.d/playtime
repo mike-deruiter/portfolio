@@ -59,11 +59,35 @@ awk 'BEGIN { FS=";"
                  else
                     printf "           "
                  
-                 if (minutes > 0)   
-                    if (minutes > 1)
-                        printf "%2d Minutes\n", minutes
-                    else
-                        printf "%2d  Minute\n", minutes 
+                 if (minutes != 1)
+                     printf "%2d Minutes\n", minutes
                  else
-                        print " 0 Minutes" 
+                     printf "%2d  Minute\n", minutes
              }                                        }'
+
+CURRENT_MONTH=$(date +%g-%m)
+
+cat $(ls $PLAYTIME_DIR/$CURRENT_MONTH/*) | \
+awk 'BEGIN { FS=";" }
+           { total += $1 }
+     END   { minutes = total
+             hours = 0
+             while (minutes - 60 > 0) {
+                 hours++
+                 minutes -= 60
+             }
+             
+             printf "%-58s ", "This Month: "
+             
+             if (hours > 0)
+                 if (hours > 1)
+                     printf "%3d Hours, ", hours
+                 else
+                     printf "%3d  Hour, ", hours
+             else
+                printf "           "
+                
+             if (minutes != 1)
+                 printf "%2d Minutes\n", minutes
+             else
+                 printf "%2d  Minute\n", minutes }'
