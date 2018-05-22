@@ -67,8 +67,9 @@ awk 'BEGIN { FS=";"
 
 CURRENT_MONTH=$(date +%g-%m)
 
-cat $(ls $PLAYTIME_DIR/$CURRENT_MONTH/*) | \
-awk 'BEGIN { FS=";" }
+if [ -e $PLAYTIME_DIR/$CURRENT_MONTH ]; then
+    cat $(ls $PLAYTIME_DIR/$CURRENT_MONTH/*) | \
+    awk 'BEGIN { FS=";" }
            { total += $1 }
      END   { minutes = total
              hours = 0
@@ -91,3 +92,4 @@ awk 'BEGIN { FS=";" }
                  printf "%2d Minutes\n", minutes
              else
                  printf "%2d  Minute\n", minutes }'
+fi
