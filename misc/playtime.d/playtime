@@ -20,7 +20,7 @@ separator=$(printf %80s | tr ' ' '=')
 
 cat $(ls $PLAYTIME_DIR/*/*) | \
 awk 'BEGIN { FS=";"                                   
-             printf "'$separator'"                    }
+             printf "'$separator'\n"                    }
            { playtime[$2] += $1 
              total += $1                              }
      END   { for (game in playtime) games[++j] = game
@@ -47,7 +47,7 @@ awk 'BEGIN { FS=";"
                      minutes -= 60
                  }
                  if (i == j) {
-                     printf "'$separator'"
+                     printf "'$separator'\n"
                  } 
                  printf "%-58s ", games[i]
                  
