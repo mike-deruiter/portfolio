@@ -1,3 +1,6 @@
+// dup2a - Adapted from THE GO PROGRAMMING LANGUAGE by Brian Kernighan
+// & Alan Donovan
+
 package main
 
 import (
