@@ -1,4 +1,4 @@
-****Various Small Programs by Mike DeRuiter****
+## Various Small Programs by Mike DeRuiter
 
 ## Descripton
 
