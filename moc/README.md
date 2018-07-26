@@ -1,4 +1,4 @@
-**moc (Mike's Own Calculator)**
+## moc (Mike's Own Calculator)
 
 Adapted from THE UNIX PROGRAMMING ENVIRONMENT by Brian Kernighan & Rob Pike. A modified version of "hoc3" that adds the following features:
 
