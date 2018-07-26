@@ -1,7 +1,5 @@
 ## Various Small Programs by Mike DeRuiter
 
----
-
 ## Descripton
 
 Collected here is an assortment of small programs written by Mike DeRuiter as he furthers his understanding of how to program & importantly, how the hell to use Git! You can reach Mike at normalman54321@gmail.com. 
