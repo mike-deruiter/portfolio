@@ -1,0 +1,63 @@
+#!/bin/bash
+
+# Adapted from THE UNIX PROGRAMMING ENVIRONMENT by Brian Kernighan & Rob Pike. 
+# Another very complicated script w/ very little practical purpose. Part of a 
+# primitive version-control suite along w/ its sister script "get"
+
+set -e
+
+PROGNAME=$(echo $0 | sed s#^.*/##)
+
+show_usage() {
+    echo $1
+    echo "Usage: $PROGNAME FILE" 1>&2
+    exit ${2:-1}
+}
+
+# check for the existence of the directory ~/.get; if a file exists by that
+# name but isn't a directory, abort. if the directory does not exist, create
+# it.
+if [ -e ~/.get -a ! -d ~/.get ]; then
+    show_usage "$PROGNAME: ~/.get exists but not a directory" 6
+elif [ ! -e ~/.get ]; then
+    mkdir ~/.get
+fi
+
+# check to see if ed is installed. if not, abort.
+if ! command -v ed >/dev/null 2>&1
+then
+    show_usage "$PROGNAME: ed not installed" 7
+fi
+
+case $# in
+    1)  FILE=~/.get/$1.H        ;;
+    *)  show_usage "$PROGNAME: 1 argument required. You supplied $#" 1 ;;
+esac
+
+trap 'rm -f /tmp/put.[ab]$$; exit 1' 1 2 15
+
+echo -n "Summary: "
+read summary
+
+# get the most recent version. this test establishes that a previous version
+# exists.
+if get -o /tmp/put.a$$ $1 2>/dev/null
+then
+    # current file serves as base of new history file
+    cp $1 /tmp/put.b$$
+    echo "@@@ `echo $USER` `date` $summary" >>/tmp/put.b$$
+    # append ed script to get from most recent version to new version to new
+    # history file (get works from most recent version backwards).
+    diff -e $1 /tmp/put.a$$ >>/tmp/put.b$$
+    # append previous ed scripts to new history file.
+    sed -n '/^@@@/,$p' <$FILE >>/tmp/put.b$$
+    trap '' 1 2 15
+    # replace history file.
+    cp /tmp/put.b$$ $FILE
+else
+    echo "$0: creating $FILE" 1>&2
+    cp $1 $FILE
+    echo "@@@ `echo $USER` `date` $summary" >>$FILE
+fi
+
+rm -f /tmp/put.[ab]$$    
