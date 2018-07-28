@@ -1,3 +1,7 @@
+# Adapted from THE UNIX PROGRAMMING LANGUAGE by Brian Kernighan & Rob Pike.
+# This version of the makefile simply changes the name of the output program
+# to "moc"
+
 YFLAGS = -d
 OBJS = hoc.o init.o math.o symbol.o
 

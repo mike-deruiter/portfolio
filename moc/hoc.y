@@ -1,3 +1,8 @@
+/* Adapted from THE UNIX PROGRAMMING ENVIRONMENT by Brian Kernighan & Rob
+   Pike. My version adds the CONST type of token, used to prevent constants
+   from being assigned a new value, & remembers the value of each
+   calculation so it can be recalled.                                       */
+
 %{
 #include "hoc.h"
 extern double Pow();

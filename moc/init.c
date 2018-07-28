@@ -1,3 +1,7 @@
+/* Adapted from THE UNIX PROGRAMMING ENVIRONMENT by Brian Kernighan & Rob
+   Pike. My version adds a line installing the "ANS" constant to the symbol
+   table, which always holds the value of the most recent calculation.      */
+
 #include <math.h>
 #include "hoc.h"
 #include "y.tab.h"

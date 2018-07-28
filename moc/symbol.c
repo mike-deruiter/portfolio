@@ -1,3 +1,6 @@
+/* Adapted from THE UNIX PROGRAMMING ENVIRONMENT by Brian Kernighan & Rob
+   Pike. This file is identical to their version.                         */
+
 #include <stdlib.h>
 #include "hoc.h"
 #include "y.tab.h"
@@ -41,6 +44,6 @@ char *emalloc(unsigned n)
 
     p = malloc(n);
     if (p == NULL)
-        execerror("out of memory", NULL);
+        execerror("out of memory", 0);
     return p;
 }

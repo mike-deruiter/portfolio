@@ -1,3 +1,6 @@
+/* Adapted from THE UNIX PROGRAMMING ENVIRONMENT by Brian Kernighan & Rob
+   Pike. This file is identical to their version.                         */
+
 #include <math.h>
 #include <errno.h>
 
