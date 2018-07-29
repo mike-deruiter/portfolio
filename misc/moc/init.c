@@ -3,7 +3,7 @@
    table, which always holds the value of the most recent calculation.      */
 
 #include <math.h>
-#include "hoc.h"
+#include "moc.h"
 #include "y.tab.h"
 
 extern double Log(), Log10(), Exp(), Sqrt(), integer();
