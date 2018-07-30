@@ -282,7 +282,6 @@
             MOVE ZEROES                 TO A-YEAR-MUSIC-RATING.
             MOVE ZEROES                 TO A-YEAR-MUSIC-NUM.
 
-                
        OD2000-CALC-GRAND-TOTAL-AVG.
             MOVE A-TOTAL-MUSIC-VALUE TO GT-MUSIC-VALUE.
             
