@@ -47,28 +47,21 @@ int main()
 
     wins_strat = wins_nostrat = 0;
 
-    // seed the random number generator    
     srand(time(NULL));
 
-    // play the game 'iterations' times following the strategy.
     for (i = 0; i < ITERATIONS; ++i)
         if (playgame(true))
             ++wins_strat;
 
-    // play the game 'interations' times not following the strategy.
     for (i = 0; i < ITERATIONS; ++i)
         if (playgame(false))
             ++wins_nostrat;
 
-    /* calculate the percentages & convert to the form normally understood
-       by humans.                                                          */
     strat_percent = (double) wins_strat / (double) ITERATIONS;
-    nostrat_percent = (double) wins_nostrat / (double) ITERATIONS;
-    
+    nostrat_percent = (double) wins_nostrat / (double) ITERATIONS;    
     strat_percent *= 100;
     nostrat_percent *= 100;
 
-    // print output
     printf("The computer won %.2f%% of the time while following the "
            "strategy.\n", strat_percent);
     printf("The computer won %.2f%% of the time while not following the "
@@ -94,7 +87,6 @@ bool playgame(bool following_strat)
     int winning_door = rand() % DOORS;
     doors[winning_door] = true;
 
-    // the player guesses a random door.
     int player_guess = rand() % DOORS;
  
     int closed;
@@ -108,14 +100,11 @@ bool playgame(bool following_strat)
             closed = rand() % DOORS;
         } while (closed == player_guess);
 
-    /* if the player is following the strategy, switch their guess to the
-     * closed door                                                        */ 
     if (following_strat)
         player_guess = closed;
     else
         player_guess = (rand() % 2) ? player_guess : closed;
 
-    // return whether or not the player won.
     if (doors[player_guess]) {
         doors[player_guess] = false;
         return true;
