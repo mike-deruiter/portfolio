@@ -12,7 +12,7 @@
 
 import os, sys, subprocess, pwd, re
 
-PROGNAME = os.path.split(sys.argv[0])[1]
+# Function defintions ##########################################################
 
 def show_usage(message, code=1):
     print(message)
@@ -24,6 +24,10 @@ def shell(command):
     proc.wait()
     
     return proc.returncode
+
+# Start of script ##############################################################
+
+PROGNAME = os.path.split(sys.argv[0])[1]
 
 if os.geteuid() != 0:
     show_usage("%s: must be run as root." % (PROGNAME))
@@ -68,15 +72,20 @@ for name in names:
     newname = basename + ''.join(alpha)
     
     try:
+        # Check if new name already exists
         pwd.getpwnam(newname)
-        print("%-8s : <error renaming user>" % (name))
+        print("%-8s : <error renaming user - already exists>" % (name))
     except KeyError:
+        # It doesn't, so change directory, then change group (script assumes
+        # users all have their own group named after them), then finally change
+        # username
         if shell("usermod -d /home/%s -m %s" % (newname, name)) == 0:
             if shell("groupmod -n %s %s" % (newname, name)) == 0:
                 shell("usermod -l %s %s" % (newname, name))
                 print("%-8s : %s" % (name, newname))
             else:
                 shell("usermod -d /home/%s -m %s" % (name, name))
-                print("%-8s : <error renaming user>" % (name))
+                print("%-8s : <error renaming user - can't rename group>" % 
+                      (name))
         else:
-            print("%-8s : <error renaming user>" % (name))
+            print("%-8s : <error renaming user - can't rename home>" % (name))
