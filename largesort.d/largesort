@@ -42,11 +42,12 @@ run_trials() {
         TIME=`echo "scale=3; $END_TIME - $START_TIME" | bc`
 
         echo -n "$TIME+" >> $OUTPUT
+        echo -n '.' 1>&2
     done
     echo "0) / 3" >> $OUTPUT
 }
 
-echo "Running..." 1>&2
+echo -n "Running..." 1>&2
 
 compile $SOURCE_DIR/largesort-argp.c $EXE
 
@@ -54,6 +55,8 @@ run_trials -n /tmp/bcind.$$
 run_trials -i /tmp/bcini.$$
 run_trials -s /tmp/bcsed.$$
 run_trials -S /tmp/bcshe.$$
+
+printf "\n"
 
 printf "Insertion Sort (Direct): %6.3f seconds\n" $(cat /tmp/bcind.$$ | bc)
 printf "Indirect Insertion Sort: %6.3f seconds\n" $(cat /tmp/bcini.$$ | bc)
