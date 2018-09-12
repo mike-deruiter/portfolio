@@ -1,8 +1,7 @@
 /* puzzle - Solves the following puzzle: Given the sequence of numbers
    1, 2, 3, 4, 5, 6, 7, 8, 9, how many ways can you insert a +, -, or nothing
    between the digits to get a sum of 100? (Putting nothing between two
-   digits merges them into one number.)
-                                                                              */
+   digits merges them into one number.)                                       */
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -14,7 +13,6 @@
 typedef enum { false, true } bool;
 #endif
 
-// define the target sum & the number of digits.
 #define SUM         100
 #define NUM_DIGITS  9
 
@@ -35,7 +33,7 @@ bool is_operator(int i);
 // global variables
 op_type operators[NUM_DIGITS - 1]; 
 
-// stack data structure, functions, & variables
+// stack data structure, functions, & variable
 typedef struct {
     int *stack;
     int top;
@@ -48,7 +46,7 @@ int peek(stack *s);
 
 stack *postfix;
 
-// main method
+/* main */
 int main() {
     postfix = init_stack(2*NUM_DIGITS - 1);
     init_operators();
@@ -60,7 +58,6 @@ int main() {
 void init_operators() {
     int i;
 
-    // initialize the array of operators.
     for (i = 0; i < NUM_DIGITS - 1; ++i)
         operators[i] = NONE;
 }
@@ -144,7 +141,6 @@ void print_expression() {
     putchar('1');
     for (i = 0; i < NUM_DIGITS - 1; ++i) {
         if (operators[i] != NONE)
-            // remember how the codes have this interesting property?
             putchar(operators[i] * -1);
         putchar('2' + i);
     }
