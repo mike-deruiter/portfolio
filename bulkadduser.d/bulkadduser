@@ -28,8 +28,8 @@ def shell(command):
         proc.wait()
         return proc.returncode
     else:
-        print(command) # DEBUG
-        return 0       # DEBUG
+        print(command)
+        return 0
     
 def gen_name_list():
     '''gen_name_list
