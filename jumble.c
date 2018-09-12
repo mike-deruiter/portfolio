@@ -23,15 +23,16 @@ void read_process_words(FILE *input, void do_work(char *t));
 void insert_word(char *token);
 void lookup_word(char *token);
 
-// hash table functions
+// misc functions
+void sort(char a[], int s);
+void strip_path(char **s);
+
+// hash table functions & data structure
 void init_hash();
 unsigned long convert_to_key(char *s);
 int hash_code(unsigned long key);
 bool hash_contains(char *s);
 void hash_insert(char *s);
-
-void sort(char a[], int s);
-void strip_path(char **s);
 
 typedef struct hash_node {
     long key;
@@ -90,7 +91,7 @@ void read_process_words(FILE *input, void do_work(char *t)) {
         line[0] = '\0';
         buf_len = 0;
 
-        buf[0] = '\0'; // don't remember why this is necessary
+        buf[0] = '\0';
 
         // read LINE_BUFFER bytes at a time, build up line
         do {
