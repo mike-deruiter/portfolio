@@ -4,7 +4,7 @@
 
 Collected here is an assortment of small programs written by Mike DeRuiter as he furthers his understanding of how to program & importantly, how the hell to use Git! You can reach Mike at michaelalanderuiter@gmail.com. 
 
-Some programs are purely "academic exercises" while others serve modest utility. Mike spent a year studying to be a system administrator & has a special interest in scripting languages. Probably the most impressive program currently in the collection is a flashcard-studying app written entirely in the shell. Another script (in Python) adds users to the system in bulk from a list of real names. Mike is also adept with C, & wrote a program that solves anagrams, implemented in a way to be especially suited for use in shell scripts.
+Some programs are purely "academic exercises" while others serve modest utility. Mike studied to become a system administrator & has a special interest in scripting languages. Probably the most impressive program currently in the collection is a flashcard-studying app written entirely in the shell. Another script (in Python) adds users to the system in bulk from a list of real names. Mike is also adept with C, & wrote a program that solves anagrams, taking input either from files or piped in through stdin.
 
 ## Languages Used
 
