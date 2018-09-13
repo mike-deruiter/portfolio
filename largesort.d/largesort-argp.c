@@ -9,6 +9,7 @@
 
 #define ARR_LENGTH      10000
 #define NUM_BYTES       500
+#define SEED            12345
 
 #define INSERTION            1
 #define INDIRECT             2
@@ -108,7 +109,8 @@ int main(int argc, char *argv[])
     arguments.sort_type = 0;
     argp_parse(&argp, argc, argv, 0, 0, &arguments);
 
-    srand(time(NULL));
+    //srand(time(NULL));
+    srand(SEED);
     initialize_array(a);
     
     s = debug;

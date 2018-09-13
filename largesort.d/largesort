@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 # largesort
 #   Compiles largesort-argp.c (a program for sorting a large array of large
@@ -19,8 +19,11 @@ compile() {
     SOURCE=$1
     OUTPUT=$2
 
-    gcc -o $OUTPUT $SOURCE 2>/dev/null || \
-    printf "$PROGNAME: error compiling executables.\n" 1>&2
+    sed "s/#define SEED            12345/#define SEED $RANDOM/" $SOURCE >\
+        /tmp/tmp.$$.c
+
+    gcc -o $OUTPUT /tmp/tmp.$$.c 2>/dev/null || \
+    printf "$PROGNAME: error compiling executable.\n" 1>&2
 
     if [ ! -e $OUTPUT ]; then
         cleanup
@@ -32,8 +35,8 @@ run_trials() {
     OPTS=$1
     OUTPUT=$2
     
-    echo -n "scale=3; (" > $OUTPUT
-    for trial in 1 2 3; do
+    # echo -n "scale=3; (" > $OUTPUT
+    # for trial in 1 2 3; do
         START_TIME=`date +%s.%N`
 
         $EXE $OPTS 2>&1 >/dev/null
@@ -41,15 +44,16 @@ run_trials() {
         END_TIME=`date +%s.%N`
         TIME=`echo "scale=3; $END_TIME - $START_TIME" | bc`
 
-        echo -n "$TIME+" >> $OUTPUT
+        #echo -n "$TIME+" >> $OUTPUT
+        echo $TIME >> $OUTPUT
         echo -n '.' 1>&2
-    done
-    echo "0) / 3" >> $OUTPUT
+    # done
+    # echo "0) / 3" >> $OUTPUT
 }
 
-echo -n "Running..." 1>&2
-
 compile $SOURCE_DIR/largesort-argp.c $EXE
+
+echo -n "Running..." 1>&2
 
 run_trials -n /tmp/bcind.$$
 run_trials -i /tmp/bcini.$$
