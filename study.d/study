@@ -23,7 +23,7 @@ pick() {
 }
 
 if [ $# -lt 1 ]; then
-    echo "$PROGNAME: Please specify flashcard set to study." 1>&2
+    echo "$PROGNAME: Please specify flashcard set(s) to study." 1>&2
     exit 1
 fi
 
@@ -137,7 +137,7 @@ fi
 
 # display percentage
 PERCENTAGE=$(echo "scale=2; ($num_correct / $NUM_CARDS) * 100" | bc | \
-             cut -d. -f 1,1)            
+             cut -d. -f 1,1)
 echo Correct: $PERCENTAGE%
 
 touch /tmp/wrong.$$
