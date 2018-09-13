@@ -1,7 +1,8 @@
 #!/bin/sh 
 
 # random
-# Returns a random line from 1 or more files.
+# Returns a random line from 1 or more files, or from stdin if no files
+# specified.
 
 set -eu
 
@@ -13,19 +14,27 @@ show_usage() {
     exit ${2:-1}
 }
 
-if [ $# -lt 1 ]; then
-    show_usage "$PROGNAME: 1 or more arguments required. You supplied $#."
-elif [ ! -f $1 ]; then
-    show_usage "$PROGNAME: $1 not a file." 2
-fi
+touch /tmp/random.$$
 
 for i in "$@"
 do
-    NUM_LINES=$(cat $1 | wc -l)
-    RAND_LENGTH=$(echo "$(echo $NUM_LINES | wc -c) - 1" | bc)
-
-    random=$(cat /dev/urandom | tr -dc '0-9' | fold -w $RAND_LENGTH | head -n 1)
-    line=$(echo "($random % $NUM_LINES) + 1" | bc)
-
-    awk 'NR == ('$line') { print; }' $i
+    if [ ! -f $i ]; then
+        rm -f /tmp/random.$$
+        show_usage "$PROGNAME: $i not a file." 2
+    fi
+    cat $i >>/tmp/random.$$
 done
+
+if [ $# -eq 0 ]; then
+    cat - >/tmp/random.$$
+fi
+
+NUM_LINES=$(cat /tmp/random.$$ | wc -l)
+RAND_LENGTH=$(echo "$(echo $NUM_LINES | wc -c) - 1" | bc)
+
+random=$(cat /dev/urandom | tr -dc '0-9' | fold -w $RAND_LENGTH | head -n 1)
+line=$(echo "($random % $NUM_LINES) + 1" | bc)
+
+awk 'NR == ('$line') { print; }' /tmp/random.$$
+
+rm -f /tmp/random.$$
