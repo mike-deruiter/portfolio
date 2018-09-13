@@ -9,7 +9,8 @@
 set -eu
 
 PROGNAME=$(echo $0 | sed "s#.*/##")
-PLAYTIME_DIR="$HOME/Documents/Playtime"
+# PLAYTIME_DIR="$HOME/Documents/Playtime"
+PLAYTIME_DIR="./Playtime"
 
 if ! ls $PLAYTIME_DIR/*/* 2>/dev/null 1>&2; then
     echo "$PROGNAME: Playtime data not found." 1>&2
@@ -64,32 +65,3 @@ awk 'BEGIN { FS=";"
                  else
                      printf "%2d  Minute\n", minutes
              }                                        }'
-
-CURRENT_MONTH=$(date +%g-%m)
-
-if [ -e $PLAYTIME_DIR/$CURRENT_MONTH ]; then
-    cat $(ls $PLAYTIME_DIR/$CURRENT_MONTH/*) | \
-    awk 'BEGIN { FS=";" }
-           { total += $1 }
-     END   { minutes = total
-             hours = 0
-             while (minutes - 60 > 0) {
-                 hours++
-                 minutes -= 60
-             }
-             
-             printf "%-58s ", "This Month: "
-             
-             if (hours > 0)
-                 if (hours > 1)
-                     printf "%3d Hours, ", hours
-                 else
-                     printf "%3d  Hour, ", hours
-             else
-                printf "           "
-                
-             if (minutes != 1)
-                 printf "%2d Minutes\n", minutes
-             else
-                 printf "%2d  Minute\n", minutes }'
-fi
