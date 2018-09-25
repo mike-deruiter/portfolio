@@ -7,7 +7,7 @@
 #   "mem [VAR]". Variables are printed with the command "print [VAR]". The
 #   calculator supports addition/subtraction, muliplication/division,
 #   exponentiation, unary plus & minus, & a square root function. The
-#   caulcator is exited with the command "exit".
+#   program is exited with the command "exit".
 
 import sys, re, math
 
