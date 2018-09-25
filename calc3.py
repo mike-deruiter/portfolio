@@ -1,5 +1,14 @@
 #!/usr/bin/python3
 
+# calc3: Cook's Algebraic Calculator, version 3
+#   A simple calculator that allows floating-point arithmetic with variables.
+#   Variables are intialized with the command "load [VAR]". Memory is set
+#   aside for a variable (giving it a default value of 0) with the command
+#   "mem [VAR]". Variables are printed with the command "print [VAR]". The
+#   calculator supports addition/subtraction, muliplication/division,
+#   exponentiation, unary plus & minus, & a square root function. The
+#   caulcator is exited with the command "exit".
+
 import sys, re, math
 
 symbol_table = []
