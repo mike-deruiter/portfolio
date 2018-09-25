@@ -6,8 +6,11 @@ symbol_table = []
 DEBUG = False
 
 '''
+The Grammar:
+
 line           =   COMMAND VAR
                  | asgn
+                 | addition
 asgn           =   VAR '=' addition
 addition       =   multiplication (('+' | '-') multiplication)*
 multiplication =   exponentiation (('*' | '/') exponentiation)*
