@@ -98,7 +98,6 @@ class Parser():
                 if self.lexer.eof():
                     break
 
-                
         return expr
     
     def parse_multiplication(self):
