@@ -1,7 +1,5 @@
 #!/usr/bin/python3
 
-#TODO: Unary plus
-
 import sys, re, math
 
 symbol_table = []
