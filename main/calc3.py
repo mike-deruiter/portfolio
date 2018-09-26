@@ -1,5 +1,7 @@
 #!/usr/bin/python3
 
+#TODO: Throw exceptions in evaluate() instead of returning None
+
 # calc3: Cook's Algebraic Calculator, version 3
 #   A simple calculator that allows floating-point arithmetic with variables.
 #   Variables are intialized with the command "load [VAR]". Memory is set
