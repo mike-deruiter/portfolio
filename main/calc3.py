@@ -12,7 +12,7 @@
 import sys, re, math
 
 symbol_table = []
-DEBUG = False
+DEBUG = True
 
 '''
 The Grammar:
@@ -23,7 +23,7 @@ line           =   COMMAND VAR
 asgn           =   VAR '=' addition
 addition       =   multiplication (('+' | '-') multiplication)*
 multiplication =   exponentiation (('*' | '/') exponentiation)*
-exponentiation =   unary '^' unary
+exponentiation =   unary ('^' unary)
 unary          =   '-' function
                  | function
 function       =   FUNCTION primary
@@ -113,9 +113,9 @@ class Parser():
             self.paren_close = True
             return expr
                 
-        if o.get_token_type() == "OP":
-            while o.get_token_type() == "OP":
-                if o.get_value() != '*' and o.get_value() != '/':
+        if o.token_type == "OP":
+            while o.token_type == "OP":
+                if o.value != '*' and o.value != '/':
                     return expr
                     
                 oper = self.lexer.next()
@@ -141,7 +141,7 @@ class Parser():
         
         if e.token_type != "OP" or e.value != '^':
             return left
-        self.lexer.next()    
+        self.lexer.next()
         
         right = self.parse_unary()
         
@@ -184,8 +184,8 @@ class Parser():
         #DEBUG
         #print("p_p: %s" % p.get_value())
         
-        if p.get_token_type() == "PAREN":
-            if p.get_value() != "(":
+        if p.token_type == "PAREN":
+            if p.value != "(":
                 raise Exception
             self.lexer.next()
             
@@ -361,23 +361,12 @@ class Symbol:
         self.name = tt
         self.value = v
 
-    def get_name(self):
-        return self.name
-    
-    def get_value(self):
-        return self.value
-        
-    def set_value(self, v):
-        self.value = v
-        
 class Token:
     def __init__(self, tt, v):
         self.token_type = tt
         self.value = v
 
-    def get_token_type(self):
-        return self.token_type
-    
+    #DEBUG
     def get_value(self):
         return self.value
 
@@ -386,16 +375,8 @@ class Binary_Token:
         self.left = l
         self.op = o
         self.right = r
-        
-    def get_left(self):
-        return self.left
-        
-    def get_op(self):
-        return self.op
-        
-    def get_right(self):
-        return self.right
-        
+    
+    #DEBUG
     def get_value(self):
         if self.left == None:
             return "%s (%s)" % (self.op.get_value(), self.right.get_value())
@@ -423,7 +404,7 @@ def evaluate(tkn):
                 return symbol_table[symbol_table_indexOf(
                        var_name)].value
         return tkn.value
-    if tkn.op.token_type == "COMMAND":
+    elif tkn.op.token_type == "COMMAND":
         if tkn.op.value == "load":
             var_name = tkn.right.value
             if not symbol_table_indexOf(var_name) == -1:
@@ -456,8 +437,8 @@ def evaluate(tkn):
                 return None
             else:
                 s = symbol_table[symbol_table_indexOf(var_name)]
-                return s.get_value()
-    if tkn.op.token_type == "EQUALS":
+                return s.value
+    elif tkn.op.token_type == "EQUALS":
         var_name = tkn.left.value
         i = symbol_table_indexOf(var_name)
         if i == -1:
@@ -467,21 +448,21 @@ def evaluate(tkn):
         if b == None:
             return None
         symbol_table[i].value = b
-    if tkn.op.token_type == "UNARY":
+    elif tkn.op.token_type == "UNARY":
         a = evaluate(tkn.right)
         if a == None:
             return None
-        if tkn.value == '-':
+        if tkn.op.value == '-':
             return -1 * a
         else:
             return math.fabs(a)
-    if tkn.op.token_type == "FUNCTION":
+    elif tkn.op.token_type == "FUNCTION":
         if tkn.op.value == "sqrt":
             a = evaluate(tkn.right)
             if a == None:
                 return None
             return math.sqrt(a)
-    if tkn.op.value == "+":
+    elif tkn.op.value == "+":
         a = evaluate(tkn.left)
         if a == None:
             return None
@@ -522,9 +503,6 @@ def evaluate(tkn):
             return None
         return a ** b
     
-
-# Begin of Test
-
 user_input = "0"
 
 while user_input != "":
