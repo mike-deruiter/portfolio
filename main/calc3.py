@@ -12,7 +12,7 @@
 import sys, re, math
 
 symbol_table = []
-DEBUG = True
+DEBUG = False
 
 '''
 The Grammar:
