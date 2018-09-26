@@ -26,7 +26,7 @@ multiplication =   exponentiation (('*' | '/') exponentiation)*
 exponentiation =   unary ('^' unary)
 unary          =   '-' function
                  | function
-function       =   FUNCTION primary
+function       =   FUNCTION '(' addition ')'
                  | primary
 primary        =   '(' addition ')'
                  | NUMBER
@@ -522,14 +522,21 @@ while user_input != "":
         try:
             return_token = parser.parse()
         except Exception:
-            print("Syntax Error")
+            print("Error: Syntax")
             return_token = None
     else:
         return_token = parser.parse()
     
     if return_token == None:
         continue
-    ans = evaluate(return_token)
+        
+    ans = None
+    
+    try:
+        ans = evaluate(return_token)
+    except ValueError:
+        print("Error: Invalid Value")
+        
     if ans == None:
         continue
 
