@@ -27,6 +27,7 @@ addition       =   multiplication (('+' | '-') multiplication)*
 multiplication =   exponentiation (('*' | '/') exponentiation)*
 exponentiation =   unary ('^' unary)
 unary          =   '-' function
+                 | '+' function
                  | function
 function       =   FUNCTION '(' addition ')'
                  | primary
