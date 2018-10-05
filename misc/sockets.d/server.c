@@ -9,6 +9,7 @@
 
 #define BUFF_SIZE   1024
 #define PORT        8080
+#define ADDRESS     "127.0.0.1"
 
 int main(int argc, char *argv[])
 {
@@ -16,36 +17,41 @@ int main(int argc, char *argv[])
     struct sockaddr_in address;
     int addrlen = sizeof(address);   // ???
     char buffer[BUFF_SIZE] = {0};
-    char *hello = "Greetings from the Server";
+    char *hello = "Greetings from server";
     
     if ((server_fd = socket(AF_INET,        // IPv4 
                             SOCK_STREAM,    // TCP
                             0)) == 0)
     {
-        perror("socket failed");
+        perror("server: socket failed");
         exit(EXIT_FAILURE);
     }
     
     address.sin_family = AF_INET;
-    inet_pton(AF_INET, "127.0.0.1", &address.sin_addr.s_addr);
     address.sin_port = htons(PORT);
+    
+    if (inet_pton(AF_INET, ADDRESS, &address.sin_addr.s_addr) < 0)
+    {
+        perror("server: invalid address / not supported");
+        exit(EXIT_FAILURE);
+    }
     
     if (bind(server_fd, (struct sockaddr *)&address, sizeof(address)) < 0) 
     {
-        perror("bind failed");
+        perror("server: bind failed");
         exit(EXIT_FAILURE);
     }
     
     if (listen(server_fd, 3) < 0) 
     {
-        perror("listen");
+        perror("server: listen");
         exit(EXIT_FAILURE);
     }
     
     if ((new_socket = accept(server_fd, (struct sockaddr *)&address,
                              (socklen_t *)&addrlen)) < 0)
     {
-        perror("accept");
+        perror("server: accept");
         exit(EXIT_FAILURE);
     }
     
