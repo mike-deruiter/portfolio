@@ -1,4 +1,6 @@
-/* Reference: https://geeksforgeeks.org/socket-programming-cc */
+/* Reference: https://geeksforgeeks.org/socket-programming-cc 
+ *
+ * Just a demonstration that I understand this code.          */
 
 #include <stdio.h>
 #include <stdlib.h>
