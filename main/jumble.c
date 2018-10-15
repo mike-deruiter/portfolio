@@ -104,7 +104,6 @@ void read_process_words(FILE *input, void do_work(char *t)) {
 
         token = (char *) malloc(sizeof(char) * (buf_len + 1));
 
-        int m, n;
         char *l = line;
         while (sscanf(line, "%s", token) > 0) {
             do_work(token);
