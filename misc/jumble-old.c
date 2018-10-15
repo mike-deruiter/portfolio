@@ -82,12 +82,12 @@ void read_process_words(FILE *input, void do_work(char *t)) {
     char *line, *token = NULL;
     char buf[LINE_BUFFER];
    
-    size_t chars_read, buf_len, max_line_len;
+    size_t chars_read, buf_len;
 
     do {
         // reset variables
-        line = (char *) malloc(sizeof(LINE_BUFFER));
-        max_line_len = LINE_BUFFER;
+        line = NULL;
+        line = (char *) malloc(sizeof(char));
         line[0] = '\0';
         buf_len = 0;
 
@@ -98,10 +98,7 @@ void read_process_words(FILE *input, void do_work(char *t)) {
             fgets(buf, LINE_BUFFER, input);
             chars_read = strlen(buf);
             buf_len += chars_read;
-            if (max_line_len < buf_len) {
-                max_line_len = buf_len + 1;
-                line = realloc(line, sizeof(char) * max_line_len);
-            }
+            line = realloc(line, sizeof(char) * buf_len + 1);
             strcat(line, buf);
         } while (chars_read == LINE_BUFFER - 1);
 
