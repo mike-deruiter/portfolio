@@ -1,7 +1,8 @@
 /* hangman.cpp (Prototype): 
    Theoretically solves Hangman, but does so very stupidly; the computer 
    always guesses letters in descending order of their frequency in the 
-   dictionary. I don't know a word that it can correctly solve.          */
+   dictionary. I don't know a word that it can correctly solve when given 6
+   wrong guesses.                                                           */
 
 #include <map>
 #include <vector>
