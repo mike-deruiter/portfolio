@@ -11,7 +11,7 @@
 #include <string>
 #include <cctype>
 
-#define DICT_NAME "/usr/share/dict/words"
+#define DICT_NAME   "/usr/share/dict/words"
 #define MAX_WRONG   6
 
 void hash_chars(const std::string);
