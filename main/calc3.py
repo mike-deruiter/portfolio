@@ -1,5 +1,6 @@
 #!/usr/bin/python3
 
+#TODO: Throw specific exception in Parser.parse(), etc.
 #TODO: Throw exceptions in evaluate() instead of returning None
 
 # calc3: Cook's Algebraic Calculator, version 3
@@ -177,15 +178,11 @@ class Parser():
        
         if self.paren_close == False:
             raise Exception
-        self.paren_close == True
 
         return Binary_Token(None, tkn, right)
         
     def parse_primary(self):
         p = self.lexer.peek()
-        
-        #DEBUG
-        #print("p_p: %s" % p.get_value())
         
         if p.token_type == "PAREN":
             if p.value != "(":
@@ -193,11 +190,6 @@ class Parser():
             self.lexer.next()
             
             mid = self.parse_addition()
-            
-            self.paren_close = True
-            
-            #DEBUG
-            #print("p_p_ap")
             
             return mid
         if p.token_type == "VAR":
