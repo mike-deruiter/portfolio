@@ -23,7 +23,7 @@ extern double Pow();
 list:     /* nothing */     
         | list '\n'
         | list asgn '\n'
-        | list expr '\n'        { printf("\t%.8g\n", $2); }
+        | list expr '\n'        { printf("%.8g\n", $2); }
         | list error '\n'       { yyerrok; }
         ;
 
