@@ -4,7 +4,7 @@
    calculation so it can be recalled.                                       */
 
 %{
-#include "moc.h"
+#include "mhc.h"
 extern double Pow();
 %}
 %union {
