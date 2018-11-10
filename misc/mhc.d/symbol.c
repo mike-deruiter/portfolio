@@ -2,7 +2,7 @@
    Pike. This file is identical to their version.                         */
 
 #include <stdlib.h>
-#include "moc.h"
+#include "mhc.h"
 #include "y.tab.h"
 
 char *emalloc(unsigned n);

@@ -1,17 +1,17 @@
 # Adapted from THE UNIX PROGRAMMING LANGUAGE by Brian Kernighan & Rob Pike.
 # This version of the makefile simply changes the name of the output program
-# to "moc"
+# to "mhc"
 
 YFLAGS = -d
-OBJS = moc.o init.o math.o symbol.o
+OBJS = mhc.o init.o math.o symbol.o
 
-moc:	$(OBJS)
-	gcc $(OBJS) -lm -o moc
+mhc:	$(OBJS)
+	gcc $(OBJS) -lm -o mhc
 
-moc.o:	moc.h
+mhc.o:	mhc.h
 
 pr:
-		@pr moc.y moc.h init.c math.c symbol.c makefile
+		@pr mhc.y mhc.h init.c math.c symbol.c makefile
 
 clean:
 		rm -f $(OBJS) y.tab.[ch]
