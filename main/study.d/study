@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 set -eu
 
@@ -101,13 +101,13 @@ while [ $i -gt 0 ]; do
          < /tmp/shuffle.$$ | fmt -s -w 80          
     
     # ask user if answer is correct (only accept 'y' or 'n')
-    error="error"
-    while [ "$error" == "error" ]; do
+    err="err"
+    while [ "$err" == "err" ]; do
         echo -n '>> '
         correct=$(pick correct)
         
-        if [ "$correct" != "error" ]; then
-            error="none"
+        if [ "$correct" != "err" ]; then
+            err="none"
         fi
     done
     
