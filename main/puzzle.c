@@ -110,7 +110,7 @@ void gen_postfix() {
                 // merge the top of the stack with the new digit 
                 push(postfix, (pop(postfix) * 10) + (2 + i));
                 // ...then put the operator back
-                if (is_operator(temp))                
+                if (temp != NONE)                
                     push(postfix, temp);
         }
 }
