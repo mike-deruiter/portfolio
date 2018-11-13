@@ -148,7 +148,7 @@ void print_expression() {
 }
 
 /* is_operator - determine whether or not an item in the stack is an 
- * operator.                                                        */
+ * operator.                                                         */
 bool is_operator(int i) {
     if (i == ADD || i == SUB)
         return true;
