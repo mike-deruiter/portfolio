@@ -37,14 +37,14 @@ op_type operators[NUM_DIGITS - 1];
 typedef struct {
     int *stack;
     int top;
-} stack;
+} Stack;
 
-stack *init_stack(int size);
-void push(stack *s, int i);
-int pop(stack *s);
-int peek(stack *s);
+Stack *init_stack(int size);
+void push(Stack *s, int i);
+int pop(Stack *s);
+int peek(Stack *s);
 
-stack *postfix;
+Stack *postfix;
 
 /* main */
 int main() {
@@ -157,10 +157,10 @@ bool is_operator(int i) {
 }
 
 /* init_stack */
-stack *init_stack(int size) {
-    stack *s;
+Stack *init_stack(int size) {
+    Stack *s;
 
-    s = malloc(sizeof(stack));
+    s = malloc(sizeof(Stack));
     s->stack = malloc(size * sizeof(int));
     s->top = -1;
 
@@ -168,16 +168,16 @@ stack *init_stack(int size) {
 }
 
 /* push - push a value onto the stack. */
-void push(stack *s, int i) {
+void push(Stack *s, int i) {
     s->stack[++s->top] = i;
 }
 
 /* pop - pop a value from the stack. */
-int pop(stack *s) {
+int pop(Stack *s) {
     return s->stack[s->top--];
 }
 
 /* peek - return the value on top of the stack. */
-int peek(stack *s) {
+int peek(Stack *s) {
     return s->stack[s->top];
 }
