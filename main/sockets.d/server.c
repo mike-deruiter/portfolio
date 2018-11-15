@@ -17,7 +17,7 @@ int main(int argc, char *argv[])
 {
     int server_fd, new_socket, valread;
     struct sockaddr_in address;
-    int addrlen = sizeof(address);   // ???
+    int addrlen = sizeof(address);
     char buffer[BUFF_SIZE] = {0};
     char *hello = "Greetings from server";
     
@@ -32,27 +32,33 @@ int main(int argc, char *argv[])
     address.sin_family = AF_INET;
     address.sin_port = htons(PORT);
     
+    // NOTE: Need to look this up again
     if (inet_pton(AF_INET, ADDRESS, &address.sin_addr.s_addr) < 0)
     {
         perror("server: invalid address / not supported");
         exit(EXIT_FAILURE);
     }
     
+    // NOTE: Need to look this up again
     if (bind(server_fd, (struct sockaddr *)&address, sizeof(address)) < 0) 
     {
         perror("server: bind failed");
         exit(EXIT_FAILURE);
     }
     
+    // NOTE: Need to look this up again
     if (listen(server_fd, 3) < 0) 
     {
+        // Unhelpful error message
         perror("server: listen");
         exit(EXIT_FAILURE);
     }
     
+    // NOTE: Need to look this up again
     if ((new_socket = accept(server_fd, (struct sockaddr *)&address,
                              (socklen_t *)&addrlen)) < 0)
     {
+        // Unhelpful error message
         perror("server: accept");
         exit(EXIT_FAILURE);
     }

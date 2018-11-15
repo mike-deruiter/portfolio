@@ -19,18 +19,20 @@ int main(int argc, char *argv[])
     int sockfd = 0, valread;
     char *hello = "Greetings from client";
     char buffer[BUFF_LEN] = {0};
-    
+ 
+    // NOTE: Need to look this up again   
     if ((sockfd = socket(AF_INET, SOCK_STREAM, 0)) < 0)
     {
         perror("client: socket failed");
         exit(EXIT_FAILURE);
     }
     
-    memset(&serv_addr, '0', sizeof(serv_addr)); // ???
+    memset(&serv_addr, '0', sizeof(serv_addr));
     
     serv_addr.sin_family = AF_INET;
     serv_addr.sin_port = htons(PORT);
     
+    // NOTE: Need to look this up again
     if (inet_pton(AF_INET, ADDRESS, &serv_addr.sin_addr) <= 0)
     {
         perror("client: invalid address / not supported");
