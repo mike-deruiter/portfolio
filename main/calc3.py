@@ -385,7 +385,7 @@ class Binary_Token:
 def symbol_table_indexOf(var_name):
     i = 0
     for s in symbol_table:
-        if s.get_name() == var_name:
+        if s.name == var_name:
             return i
         i+=1
     
@@ -396,7 +396,7 @@ def evaluate(tkn):
         if tkn.token_type == "VAR":
             var_name = tkn.value
             if symbol_table_indexOf(var_name) == -1:
-                print(var_name + " doesn't exist")
+                print("Error: " + var_name + " doesn't exist")
                 return None
             else:
                 return symbol_table[symbol_table_indexOf(
@@ -406,7 +406,7 @@ def evaluate(tkn):
         if tkn.op.value == "load":
             var_name = tkn.right.value
             if not symbol_table_indexOf(var_name) == -1:
-                print(var_name + " already exists")
+                print("Error: " + var_name + " already exists")
                 return None
             else:
                 sys.stdout.write("Enter value for " + var_name + ": ")
@@ -422,7 +422,7 @@ def evaluate(tkn):
         elif tkn.op.value == "mem":
             var_name = tkn.right.value
             if not symbol_table_indexOf(var_name) == -1:
-                print(var_name + " already exists")
+                print("Error: " + var_name + " already exists")
                 return None
             else:
                 s = Symbol(var_name, 0.0)
@@ -431,7 +431,7 @@ def evaluate(tkn):
         elif tkn.op.value == "print":
             var_name = tkn.right.value
             if symbol_table_indexOf(var_name) == -1:
-                print(var_name + " doesn't exist")
+                print("Error: " + var_name + " doesn't exist")
                 return None
             else:
                 s = symbol_table[symbol_table_indexOf(var_name)]
