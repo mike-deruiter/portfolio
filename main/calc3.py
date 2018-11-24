@@ -20,10 +20,9 @@ DEBUG = False
 The Grammar:
 
 line           =   COMMAND VAR
-                 | asgn
                  | addition
-asgn           =   VAR '=' addition
-addition       =   multiplication (('+' | '-') multiplication)*
+addition       =   VAR '=' addition
+                 | multiplication (('+' | '-') multiplication)*
 multiplication =   exponentiation (('*' | '/') exponentiation)*
 exponentiation =   unary ('^' unary)
 unary          =   '-' function
@@ -56,25 +55,9 @@ class Parser():
             if self.lexer.peek().token_type != "VAR":
                 raise Exception
             return Binary_Token(None, cmd, self.lexer.next())
-        elif (self.lexer.peek().token_type == "VAR"):
-            return self.parse_asgn()
         else:
             return self.parse_addition()
     
-    def parse_asgn(self):
-        if self.lexer.peek().token_type != "VAR":
-            raise Exception
-        var = self.lexer.next()
-        
-        if self.lexer.eof():
-            return var
-        
-        op = self.lexer.next()
-        
-        right = self.parse_addition()
-        
-        return Binary_Token(var, op, right)
-        
     def parse_addition(self):
         expr = self.parse_multiplication()
 
@@ -82,6 +65,12 @@ class Parser():
         
         if self.lexer.eof():
             return expr
+        
+        # Check for assignment
+        if expr.token_type == "VAR" and o.token_type == "EQUALS":
+            op = self.lexer.next()
+            right = self.parse_addition()
+            return Binary_Token(expr, op, right)
         
         if o.token_type == "PAREN" and o.value == ")":
             self.lexer.next()
