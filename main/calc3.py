@@ -426,7 +426,7 @@ def evaluate(tkn):
             else:
                 s = Symbol(var_name, 0.0)
                 symbol_table.append(s)
-                raise Exception
+                raise Exception # Not really an error
         elif tkn.op.value == "print":
             var_name = tkn.right.value
             if symbol_table_indexOf(var_name) == -1:
