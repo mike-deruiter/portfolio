@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 
 #TODO: Throw specific exception in Parser.parse(), etc.
-#TODO: Throw exceptions in evaluate() instead of returning None
+#TODO: Make 'exit' a command (?)
 
 # calc3: Cook's Algebraic Calculator, version 3
 #   A simple calculator that allows floating-point arithmetic with variables.
@@ -397,17 +397,17 @@ def evaluate(tkn):
             var_name = tkn.value
             if symbol_table_indexOf(var_name) == -1:
                 print("Error: " + var_name + " doesn't exist")
-                return None
+                raise Exception
             else:
                 return symbol_table[symbol_table_indexOf(
                        var_name)].value
-        return tkn.value
+        return tkn.value # Returns value of NUMBER tokens
     elif tkn.op.token_type == "COMMAND":
         if tkn.op.value == "load":
             var_name = tkn.right.value
             if not symbol_table_indexOf(var_name) == -1:
                 print("Error: " + var_name + " already exists")
-                return None
+                raise Exception
             else:
                 sys.stdout.write("Enter value for " + var_name + ": ")
                 sys.stdout.flush()
@@ -415,24 +415,24 @@ def evaluate(tkn):
                     user_input = sys.stdin.readline()
                 except KeyboardInterrupt:
                     print()
-                    return None
+                    raise Exception
                 s = Symbol(var_name, float(user_input))
                 symbol_table.append(s)
-                return None
+                raise Exception
         elif tkn.op.value == "mem":
             var_name = tkn.right.value
             if not symbol_table_indexOf(var_name) == -1:
                 print("Error: " + var_name + " already exists")
-                return None
+                raise Exception
             else:
                 s = Symbol(var_name, 0.0)
                 symbol_table.append(s)
-                return None
+                raise Exception
         elif tkn.op.value == "print":
             var_name = tkn.right.value
             if symbol_table_indexOf(var_name) == -1:
                 print("Error: " + var_name + " doesn't exist")
-                return None
+                raise Exception
             else:
                 s = symbol_table[symbol_table_indexOf(var_name)]
                 return s.value
@@ -441,15 +441,11 @@ def evaluate(tkn):
         i = symbol_table_indexOf(var_name)
         if i == -1:
             print(var_name + " doesn't exist")
-            return None
+            raise Exception
         b = evaluate(tkn.right)
-        if b == None:
-            return None
         symbol_table[i].value = b
     elif tkn.op.token_type == "UNARY":
         a = evaluate(tkn.right)
-        if a == None:
-            return None
         if tkn.op.value == '-':
             return -1 * a
         else:
@@ -457,48 +453,26 @@ def evaluate(tkn):
     elif tkn.op.token_type == "FUNCTION":
         if tkn.op.value == "sqrt":
             a = evaluate(tkn.right)
-            if a == None:
-                return None
             return math.sqrt(a)
     elif tkn.op.value == "+":
         a = evaluate(tkn.left)
-        if a == None:
-            return None
         b = evaluate(tkn.right)
-        if b == None:
-            return None
         return a + b
     elif tkn.op.value == "*":
         a = evaluate(tkn.left)
-        if a == None:
-            return None
         b = evaluate(tkn.right)
-        if b == None:
-            return None
         return a * b
     elif tkn.op.value == "-":
         a = evaluate(tkn.left)
-        if a == None:
-            return None
         b = evaluate(tkn.right)
-        if b == None:
-            return None
         return a - b
     elif tkn.op.value == "/":
         a = evaluate(tkn.left)
-        if a == None:
-            return None
         b = evaluate(tkn.right)
-        if b == None:
-            return None
         return a * b
     elif tkn.op.value == "^":
         b = evaluate(tkn.right)
-        if b == None:
-            return None
         a = evaluate(tkn.left)
-        if a == None:
-            return None
         return a ** b
     
 user_input = "0"
@@ -531,8 +505,7 @@ while user_input != "":
         ans = evaluate(return_token)
     except ValueError:
         print("Error: Invalid Value")
-        
-    if ans == None:
+    except Exception:
         continue
 
     print("%s" % ans)
