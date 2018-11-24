@@ -518,12 +518,9 @@ while user_input != "":
             return_token = parser.parse()
         except Exception:
             print("Error: Syntax")
-            return_token = None
+            continue
     else:
         return_token = parser.parse()
-    
-    if return_token == None:
-        continue
         
     ans = None
     
