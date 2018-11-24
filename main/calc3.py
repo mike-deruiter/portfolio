@@ -1,7 +1,6 @@
 #!/usr/bin/python3
 
 #TODO: Throw specific exception in Parser.parse(), etc.
-#TODO: Make 'exit' a command (?)
 
 # calc3: Cook's Algebraic Calculator, version 3
 #   A simple calculator that allows floating-point arithmetic with variables.
