@@ -49,14 +49,17 @@ class Parser():
     
     def parse_line(self):
         if (self.lexer.peek().token_type == "COMMAND"):
-            cmd = self.lexer.next()
-            if cmd.value == "exit":
-                return Binary_Token(None, cmd, None)
-            if self.lexer.peek().token_type != "VAR":
-                raise Exception
-            return Binary_Token(None, cmd, self.lexer.next())
+            return self.parse_command()
         else:
             return self.parse_addition()
+    
+    def parse_command(self):
+        cmd = self.lexer.next()
+        if cmd.value == "exit":
+            return Binary_Token(None, cmd, None)
+        if self.lexer.peek().token_type != "VAR":
+            raise Exception
+        return Binary_Token(None, cmd, self.lexer.next())
     
     def parse_addition(self):
         expr = self.parse_multiplication()
