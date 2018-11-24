@@ -15,7 +15,7 @@
 import sys, re, math
 
 symbol_table = []
-DEBUG = False
+DEBUG = True
 
 '''
 The Grammar:
@@ -64,6 +64,9 @@ class Parser():
         if self.lexer.peek().token_type != "VAR":
             raise Exception
         var = self.lexer.next()
+        
+        if self.lexer.eof():
+            return var
         
         if self.lexer.peek().token_type != "EQUALS":
             raise Exception
