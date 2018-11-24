@@ -38,7 +38,6 @@ primary        =   '(' addition ')'
 class Parser():
     def __init__(self, l):
         self.lexer = l
-        self.paren_close = False
     
     def parse(self):
         r = self.parse_line()
@@ -76,8 +75,6 @@ class Parser():
             return Binary_Token(expr, op, right)
         
         if o.token_type == "PAREN" and o.value == ")":
-            self.lexer.next()
-            self.paren_close = True
             return expr
                      
         if o.token_type == "OP":
@@ -107,8 +104,6 @@ class Parser():
             return expr
         
         if o.token_type == "PAREN" and o.value == ")":
-            self.lexer.next()
-            self.paren_close = True
             return expr
                 
         if o.token_type == "OP":
@@ -170,8 +165,12 @@ class Parser():
 
         right = self.parse_addition()
        
-        if self.paren_close == False:
+        p = self.lexer.peek()
+        
+        if p.token_type != "PAREN" or p.value != ")":
             raise Exception
+        
+        self.lexer.next()
 
         return Binary_Token(None, tkn, right)
         
@@ -184,6 +183,13 @@ class Parser():
             self.lexer.next()
             
             mid = self.parse_addition()
+            
+            p = self.lexer.peek()
+            
+            if p.token_type != "PAREN" or p.value != ")":
+                raise Exception
+            
+            self.lexer.next()
             
             return mid
         if p.token_type == "VAR":
