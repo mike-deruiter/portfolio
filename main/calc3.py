@@ -15,7 +15,7 @@
 import sys, re, math
 
 symbol_table = []
-DEBUG = True
+DEBUG = False
 
 '''
 The Grammar:
@@ -52,6 +52,8 @@ class Parser():
     def parse_line(self):
         if (self.lexer.peek().token_type == "COMMAND"):
             cmd = self.lexer.next()
+            if cmd.value == "exit":
+                return Binary_Token(None, cmd, None)
             if self.lexer.peek().token_type != "VAR":
                 raise Exception
             return Binary_Token(None, cmd, self.lexer.next())
@@ -68,13 +70,11 @@ class Parser():
         if self.lexer.eof():
             return var
         
-        if self.lexer.peek().token_type != "EQUALS":
-            raise Exception
-        equals = self.lexer.next()
+        op = self.lexer.next()
         
         right = self.parse_addition()
         
-        return Binary_Token(var, equals, right)
+        return Binary_Token(var, op, right)
         
     def parse_addition(self):
         expr = self.parse_multiplication()
@@ -206,7 +206,7 @@ class Parser():
 
 class Lexer():
     curr = None
-    cmds = ["load", "mem", "print"]
+    cmds = ["load", "mem", "print", "exit"]
     funcs = ["sqrt"]
     
     def __init__(self):
@@ -403,7 +403,9 @@ def evaluate(tkn):
                        var_name)].value
         return tkn.value # Returns value of NUMBER tokens
     elif tkn.op.token_type == "COMMAND":
-        if tkn.op.value == "load":
+        if tkn.op.value == "exit":
+            sys.exit()
+        elif tkn.op.value == "load":
             var_name = tkn.right.value
             if not symbol_table_indexOf(var_name) == -1:
                 print("Error: " + var_name + " already exists")
@@ -440,10 +442,11 @@ def evaluate(tkn):
         var_name = tkn.left.value
         i = symbol_table_indexOf(var_name)
         if i == -1:
-            print(var_name + " doesn't exist")
+            print("Error: " + var_name + " doesn't exist")
             raise Exception
         b = evaluate(tkn.right)
         symbol_table[i].value = b
+        raise Exception # Not really an error
     elif tkn.op.token_type == "UNARY":
         a = evaluate(tkn.right)
         if tkn.op.value == '-':
@@ -484,11 +487,8 @@ while user_input != "":
         print()
         break
 
-    if user_input.strip() == "exit":
-        break
-
-    is_test = InputStream(user_input)
-    parser = Parser(Lexer(is_test))
+    input_stream = InputStream(user_input)
+    parser = Parser(Lexer(input_stream))
     
     if not DEBUG:
         try:
@@ -497,10 +497,9 @@ while user_input != "":
             print("Error: Syntax")
             continue
     else:
+        # Debug Mode - don't catch exceptions
         return_token = parser.parse()
-        
-    ans = None
-    
+       
     try:
         ans = evaluate(return_token)
     except ValueError:
