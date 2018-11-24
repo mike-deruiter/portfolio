@@ -11,7 +11,7 @@
 #       useradd command seems to work differently (doesn't add home
 #       directories, etc.)
 
-DEBUG = False
+DEBUG = True
 
 import os, sys, subprocess, pwd, string, re, fileinput, random
 
