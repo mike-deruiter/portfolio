@@ -14,7 +14,7 @@
 import sys, re, math
 
 symbol_table = []
-DEBUG = False
+DEBUG = True
 
 '''
 The Grammar:
@@ -301,7 +301,7 @@ class Lexer():
         if self.is_id(c):
             return self.read_id()
         if c == '/':
-            self.input_steam.next()
+            self.input_stream.next()
             n = self.input_stream.peek()
             if n == '/':
                 # skip comment
@@ -471,7 +471,7 @@ def evaluate(tkn):
     elif tkn.op.value == "/":
         a = evaluate(tkn.left)
         b = evaluate(tkn.right)
-        return a * b
+        return a / b
     elif tkn.op.value == "^":
         b = evaluate(tkn.right)
         a = evaluate(tkn.left)
