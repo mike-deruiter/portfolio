@@ -407,7 +407,8 @@ def evaluate(tkn):
             else:
                 return symbol_table[symbol_table_indexOf(
                        var_name)].value
-        return tkn.value # Returns value of NUMBER tokens
+        else:
+            return tkn.value # Returns value of NUMBER tokens
     elif tkn.op.token_type == "COMMAND":
         if tkn.op.value == "exit":
             sys.exit()
