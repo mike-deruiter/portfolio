@@ -14,7 +14,7 @@
 import sys, re, math
 
 symbol_table = []
-DEBUG = False
+DEBUG = True
 
 '''
 The Grammar:
@@ -312,6 +312,7 @@ class Lexer():
             n = self.input_stream.peek()
             if n == '/':
                 # skip comment
+                self.has_input = False
                 return None
             else:
                 return Token("OP", '/')
