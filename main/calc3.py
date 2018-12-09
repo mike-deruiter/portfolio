@@ -1,6 +1,8 @@
 #!/usr/bin/python3
 
 #TODO: Throw specific exception in Parser.parse(), etc.
+#TODO: Remind self what exactly happens when "1)+2", etc. is written, figure out
+#      way to handle it more elegantly
 
 # calc3: Cook's Algebraic Calculator, version 3
 #   A simple calculator that allows floating-point arithmetic with variables.
@@ -14,7 +16,7 @@
 import sys, re, math
 
 symbol_table = []
-DEBUG = True
+DEBUG = False
 
 '''
 The Grammar:
