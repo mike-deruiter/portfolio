@@ -428,7 +428,7 @@ def evaluate(tkn):
                     raise Exception
                 s = Symbol(var_name, float(user_input))
                 symbol_table.append(s)
-                raise Exception
+                raise Exception # Not really an error
         elif tkn.op.value == "mem":
             var_name = tkn.right.value
             if not symbol_table_indexOf(var_name) == -1:
