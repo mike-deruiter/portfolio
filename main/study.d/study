@@ -102,7 +102,7 @@ while [ $i -gt 0 ]; do
     
     # ask user if answer is correct (only accept 'y' or 'n')
     err="err"
-    while [ "$err" == "err" ]; do
+    while [ "$err" == "error" ]; do
         echo -n '>> '
         correct=$(pick correct)
         
