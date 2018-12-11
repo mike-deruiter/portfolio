@@ -1,0 +1,96 @@
+#!/bin/sh
+
+# purgegame
+#   Purges a game from your playtime history, with the option of creating
+#   backups
+
+set -eu
+
+PROGNAME=$(echo $0 | sed "s#.*/##")
+
+#PLAYTIME_DIR="$HOME/Documents/Playtime"
+PLAYTIME_DIR='.'
+
+# show_usage - print an error message, note on usage & exit
+show_usage() {
+    echo $1 1>&2
+    echo "Usage: $PROGNAME [-b] GAME [GAMES...]" 1>&2
+    exit ${2:-1}
+}
+
+
+# show_help - print a help message & exit w/ code 0
+show_help() {
+    printf "Usage: $PROGNAME [-b] GAME [GAMES...]\n" 1>&2
+    printf "Purge a specified game from your playtime records.\n\n"
+    printf "  -b  Create backup of old playtime file.\n\n"
+    printf "Written by Mike DeRuiter, 2018\n"
+    exit 0
+}
+
+# Check if --help is invoked
+if [ $# -eq 1 ] && [ "$1" = "--help" ] || [ "$1" = "-?" ]; then
+    show_help
+fi
+
+# Parse the options
+backup="false"
+while getopts b opt 2>/dev/null; do
+    case "$opt" in
+        b)      backup="true"   ;;
+        [?])    show_usage "$PROGNAME: Invalid option(s) detected." 2
+    esac
+done
+shift $(expr $OPTIND - 1 || true)
+
+# Check for at least one argument
+if [ $# -lt 1 ]; then
+    show_usage "$PROGNAME: One or more arguments expected. You supplied 0." 1
+fi
+
+GAMES="$*"
+
+for game in $GAMES; do
+    case "$game" in
+        # You can break grep by passing an option as a game name
+        -*) continue    ;;
+    esac
+
+    exists="false"
+    
+    # Go through each file in turn
+    for file in $(ls -d $PLAYTIME_DIR/*/*/*); do
+        # Just in case there's anything weird in there, check for directories
+        if [ -d $file ]; then
+            continue
+        fi
+        
+        found="false"
+        
+        if grep -q $game $file; then
+            found="true"
+            
+            sed "/;$game$/d" $file > /tmp/purgegame.$$
+            
+            # Make backup if requested
+            if [ "$backup" = "true" ]; then
+                backup=$(echo $file | sed "s#.*/##").bak
+                echo "Making backup $backup..." 1>&2
+                mv $file ./$backup
+            fi
+            
+            cp /tmp/purgegame.$$ $file
+            rm /tmp/purgegame.$$
+        fi
+        
+        # Keep track if the game exists or not
+        if [ "$exists" = "false" ] && [ "$found" = "true" ]; then
+            exists="true"
+        fi
+    done
+    
+    # If the game doesn't exist, print an error message
+    if [ "$exists" = "false" ]; then
+        echo "$game not found." 1>&2
+    fi
+done
