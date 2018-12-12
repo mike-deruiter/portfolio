@@ -1,16 +1,20 @@
 #!/bin/sh
 
 # playtime
-# Part of an ecosystem of hacks that tracks playtime of Linux-native games
-# (I don't think it works w/ wine). This script, mostly written in awk, reads
-# the raw playtime data from a pre-defined location & in a pre-defined format
-# & displays it. Much faster than the Python version!
+#   Part of an ecosystem of hacks that tracks playtime of Linux-native games
+#   (I don't think it works w/ wine). This script, mostly written in awk, reads
+#   the raw playtime data from a pre-defined location & in a pre-defined format
+#   & displays it. Much faster than the Python version!
+
+#   Playtime is stored in time-stamped directories & files in the format
+#   "MINUTES;GAME_NAME"
 
 set -eu
 
 PROGNAME=$(echo $0 | sed "s#.*/##")
+
 # PLAYTIME_DIR="$HOME/Documents/Playtime"
-PLAYTIME_DIR="./Playtime"
+PLAYTIME_DIR="./Example/Playtime"
 
 if ! ls $PLAYTIME_DIR/*/* 2>/dev/null 1>&2; then
     echo "$PROGNAME: Playtime data not found." 1>&2

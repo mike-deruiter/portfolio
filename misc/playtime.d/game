@@ -1,0 +1,38 @@
+#!/bin/sh
+
+# game
+#   Example game file for use w/ the playtime ecosystem. This particular
+#   example does nothing & exits immediately w/o logging the time (since it's
+#   less than one minute, the smallest granularity)
+
+set -eu
+
+PROGNAME=$(echo $0 | sed "s#.*/##")
+
+#PLAYTIME_DIR=$HOME/Documents/Playtime
+PLAYTIME_DIR=./Example/Playtime
+
+################################################################################
+# Game-specific variables
+COMMAND="echo Let's play!"
+GAMENAME="Example Game"
+################################################################################
+ 
+start_time=$(expr $(date +%s) / 60 || true)
+
+$COMMAND
+
+end_time=$(expr $(date +%s) / 60 || true)
+playtime=$(expr $end_time - $start_time || true)
+
+if [ $playtime -eq 0 ]; then
+    echo "$PROGNAME: Playtime less than a minute; not logging." 1>&2
+    exit 1
+fi
+
+MONTH_DIR=$(date +%y-%m)
+PLAYTIME_FILE=$(date +playtime-%y-%m-%d)
+
+mkdir -p $PLAYTIME_DIR/$MONTH_DIR 2>/dev/null
+echo "$playtime;$GAMENAME" >>\
+    $PLAYTIME_DIR/$MONTH_DIR/$PLAYTIME_FILE

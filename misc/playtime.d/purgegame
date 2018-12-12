@@ -9,7 +9,7 @@ set -eu
 PROGNAME=$(echo $0 | sed "s#.*/##")
 
 #PLAYTIME_DIR="$HOME/Documents/Playtime"
-PLAYTIME_DIR='.'
+PLAYTIME_DIR='./Example/Playtime'
 
 # show_usage - print an error message, note on usage & exit
 show_usage() {
@@ -48,18 +48,18 @@ if [ $# -lt 1 ]; then
     show_usage "$PROGNAME: One or more arguments expected. You supplied 0." 1
 fi
 
-GAMES="$*"
-
-for game in $GAMES; do
+for game in "$@"; do
     case "$game" in
         # You can break grep by passing an option as a game name
         -*) continue    ;;
     esac
+    
+    echo $game
 
     exists="false"
     
     # Go through each file in turn
-    for file in $(ls -d $PLAYTIME_DIR/*/*/*); do
+    for file in $(ls -d $PLAYTIME_DIR/*/*); do
         # Just in case there's anything weird in there, check for directories
         if [ -d $file ]; then
             continue
@@ -67,7 +67,7 @@ for game in $GAMES; do
         
         found="false"
         
-        if grep -q $game $file; then
+        if grep -q "$game" $file; then
             found="true"
             
             sed "/;$game$/d" $file > /tmp/purgegame.$$
@@ -80,6 +80,7 @@ for game in $GAMES; do
             fi
             
             cp /tmp/purgegame.$$ $file
+            
             rm /tmp/purgegame.$$
         fi
         
