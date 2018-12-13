@@ -16,7 +16,7 @@ import os, sys, subprocess, pwd, re
 
 def show_usage(message, code=1):
     print(message)
-    print("Usage: %s file" % (sys.argv[0]))
+    print("Usage: %s" % (sys.argv[0]))
     sys.exit(code)
 
 def shell(command):
