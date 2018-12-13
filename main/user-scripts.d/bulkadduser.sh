@@ -87,14 +87,16 @@ line=1
 curr=""
 prev=""
 
+# Build the Regex
+regex='^(([a-z])[a-z]* )?'          # First Name
+regex=$regex'(([a-z])[a-z]* )?'     # Middle Name
+regex=$regex'(([a-z])[a-z]* )*'     # Further Middle Names
+regex=$regex'([a-z]{1,4})[a-z]*$'   # Last Name
+
 IFS='
 '
 for name in $(cat $NAMELIST_FILE); do
-    # Build the Regex
-    regex='^(([a-z])[a-z]* )?'          # First Name
-    regex=$regex'(([a-z])[a-z]* )?'     # Middle Name
-    regex=$regex'(([a-z])[a-z]* )*'     # Further Middle Names
-    regex=$regex'([a-z]{1,4})[a-z]*$'   # Last Name
+
 
     if ! echo $name | grep -Eq "$regex"; then
         echo "error : <invalid name: $(find_line $line)>" >> $LOG_FILE
