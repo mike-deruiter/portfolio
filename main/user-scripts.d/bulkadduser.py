@@ -112,9 +112,10 @@ formatted_names = []
 duplicate_count = 1
 curr = ""
 prev = ""
+    
+re_username = re.compile(r'^((\w)\w* )?((\w)\w* )?((\w)\w* )*(\w{1,4})\w*$')
 
 for user in names:
-    re_username = re.compile(r'^((\w)\w* )?((\w)\w* )?((\w)\w* )*(\w{1,4})\w*$')
     
     rematch_username = re_username.match(user)
     
