@@ -11,9 +11,10 @@ HOME_DIR="/home"
 
 PROGNAME=$(echo $0 | sed s#^.*/##)
 
-USERNAMES_FILE="/tmp/bulkadduser.usernames.$(date +%T-%m-%d-%y)"
-NAMELIST_FILE="/tmp/bulkadduser.name_list.$(date +%T-%m-%d-%y)"
-LOG_FILE="bulkadduser.$(date +%T-%m-%d-%y).log"
+DATE_FORMAT="+%y-%m-%d-%T"
+USERNAMES_FILE="/tmp/bulkadduser.usernames.$(date $DATE_FORMAT)"
+NAMELIST_FILE="/tmp/bulkadduser.name_list.$(date $DATE_FORMAT)"
+LOG_FILE="bulkadduser.$(date $DATE_FORMAT).log"
 
 # show_usage - print an error message, note on usage & exit
 show_usage() {
