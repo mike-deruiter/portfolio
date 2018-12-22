@@ -7,7 +7,7 @@
 
 set -eu
 
-PROGNAME=$(echo $0 | sed "s#.*/##")
+PROGNAME=$(basename $0)
 
 #PLAYTIME_DIR=$HOME/Documents/Playtime
 PLAYTIME_DIR=./Example/Playtime

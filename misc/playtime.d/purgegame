@@ -6,7 +6,8 @@
 
 set -eu
 
-PROGNAME=$(echo $0 | sed "s#.*/##")
+PROGNAME=$(basename $0)
+USAGE_NOTE="Usage: $PROGNAME [-b] GAME [GAMES...]\n"
 
 #PLAYTIME_DIR="$HOME/Documents/Playtime"
 PLAYTIME_DIR='./Example/Playtime'
@@ -14,14 +15,14 @@ PLAYTIME_DIR='./Example/Playtime'
 # show_usage - print an error message, note on usage & exit
 show_usage() {
     echo $1 1>&2
-    echo "Usage: $PROGNAME [-b] GAME [GAMES...]" 1>&2
+    echo USAGE_NOTE 1>&2
     exit ${2:-1}
 }
 
 
 # show_help - print a help message & exit w/ code 0
 show_help() {
-    printf "Usage: $PROGNAME [-b] GAME [GAMES...]\n" 1>&2
+    printf USAGE_NOTE 1>&2
     printf "Purge a specified game from your playtime records.\n\n"
     printf "  -b  Create backup of old playtime file.\n\n"
     printf "Written by Mike DeRuiter, 2018\n"
