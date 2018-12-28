@@ -499,7 +499,10 @@ while user_input != "":
 
     input_stream = InputStream(user_input)
     parser = Parser(Lexer(input_stream))
-    
+
+    if user_input == "":
+        continue
+
     if not DEBUG:
         try:
             return_token = parser.parse()
