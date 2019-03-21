@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 
 # user2alph
 # Changes all usernames that have a number at the end to have letters at the 
