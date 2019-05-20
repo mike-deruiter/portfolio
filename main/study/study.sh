@@ -1,11 +1,18 @@
-#!/bin/bash
+#!/bin/sh
 
 set -eu
 
-PROGNAME=$(echo $0 | sed s#^.*/##)
+PROGNAME=$(basename $0)
 
 #FLASHCARD_DIR=$HOME/Documents/Flashcards
 FLASHCARD_DIR="."
+
+# show_usage - print an error message, note on usage & exit
+show_usage() {
+    echo $1 1>&2
+    echo "Usage: $PROGNAME FLASHCARDS [FLASHCARDS...]" 1>&2
+    exit ${2:-1}
+}
 
 # pick - adapted from THE UNIX PROGRAMMING ENVIRONMENT
 #        by Brian Kernighan & Rob Pike
@@ -23,16 +30,14 @@ pick() {
 }
 
 if [ $# -lt 1 ]; then
-    echo "$PROGNAME: Please specify flashcard set(s) to study." 1>&2
-    exit 1
+    show_usage "$PROGNAME: Please specify flashcard set(s) to study." 1
 fi
 
 # gather all the files containing cards to study
 files=""
 for i in $@; do
     if [ ! -e $FLASHCARD_DIR/$i ]; then
-        echo "$PROGNAME: Flashcards not found." 1>&2
-        exit 2
+        show_usage "$PROGNAME: Flashcards not found." 2
     fi
     files="$FLASHCARD_DIR/$i "$files
 done
@@ -102,18 +107,19 @@ while [ $i -gt 0 ]; do
     
     # ask user if answer is correct (only accept 'y' or 'n')
     err="err"
-    while [ "$err" == "error" ]; do
+    correct="err"
+    while [ "$err" = "err" ]; do
         echo -n '>> '
         correct=$(pick correct)
         
-        if [ "$correct" != "err" ]; then
+        if [ "$correct" != "error" ]; then 
             err="none"
         fi
     done
     
     # if correct,   add to $num_correct
     # if incorrect, save title of flashcard to display at end
-    if [ "$correct" == "correct" ]; then
+    if [ "$correct" = "correct" ]; then
         num_correct=$(expr $num_correct + 1)
     else
         echo @@$flashcard >> /tmp/wrong.$$
@@ -129,7 +135,7 @@ done
 
 
 # print titles of flashcards user missed
-if [ "$incorrect" == "yes" ]; then    
+if [ "$incorrect" = "yes" ]; then    
     echo Missed Questions:
     cat /tmp/wrong.$$ | cut -d@ -f 3 | sed "s/^/>> /"
     echo
