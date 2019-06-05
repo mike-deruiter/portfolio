@@ -59,7 +59,6 @@ int main()
 
     srand(time(NULL)); // seed the random number generator
 
-    printf("n: ");
     for (i = 0; i < NUMBERS_TO_ADD; ++i) {
         // generate a random number between 10 & 99 (always two characters wide)
         n = (rand() % 90) + 10; 
