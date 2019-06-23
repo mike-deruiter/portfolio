@@ -51,8 +51,13 @@ int main(int argc, char *argv[]) {
 
     if (argc > 1) {
         int i;
+        bool using_stdin;
         for (i = 1; argc-- > 1; ++i) {
-            input = fopen(argv[i], "r");
+            if (strcmp(argv[i], "-") == 0) {
+                using_stdin = true;
+                input = stdin;
+            } else
+                input = fopen(argv[i], "r");
 
             if (input == NULL) {
                 printf("%s: cannot open %s\n", argv[0], argv[i]);
@@ -60,7 +65,8 @@ int main(int argc, char *argv[]) {
             }
 
             read_process_words(input, insert_word);
-            fclose(input);
+            if (! using_stdin)
+                fclose(input);
         }
     } else
         read_process_words(stdin, insert_word);
