@@ -88,6 +88,7 @@ void init_array(int a[], int n)
 void quicksort(int a[], int n)
 {
     int p, i, j, l, r, t;
+    int lo, mid, hi;
     Stack *stack;
     
     l = 1;  r = n;  stack = init_stack(N);
@@ -95,6 +96,21 @@ void quicksort(int a[], int n)
     
     while (true) {   
         while (r > l) {
+            //median-of-three partitioning
+        	lo = l;  hi = r;  mid = (l + r) / 2;
+
+	        if (a[mid] < a[lo]) {
+	            t = a[mid];  a[mid] = a[lo];  a[lo] = t;
+	        }
+	        if (a[hi] < a[lo]) {
+	            t = a[hi];  a[hi] = a[lo];  a[lo] = t;
+	        }
+	        if (a[hi] < a[mid]) {
+	            t = a[hi];  a[hi] = a[mid];  a[mid] = t;
+	        }
+
+            t = a[mid];  a[mid] = a[hi];  a[hi] = t;
+        
             p = a[r];  i = l-1;  j = r;
 
             while (true) {
