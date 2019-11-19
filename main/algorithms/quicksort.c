@@ -97,17 +97,17 @@ void quicksort(int a[], int n)
     while (true) {   
         while (r > l) {
             //median-of-three partitioning
-        	lo = l;  hi = r;  mid = (l + r) / 2;
+            lo = l;  hi = r;  mid = (l + r) / 2;
 
-	        if (a[mid] < a[lo]) {
-	            t = a[mid];  a[mid] = a[lo];  a[lo] = t;
-	        }
-	        if (a[hi] < a[lo]) {
-	            t = a[hi];  a[hi] = a[lo];  a[lo] = t;
-	        }
-	        if (a[hi] < a[mid]) {
-	            t = a[hi];  a[hi] = a[mid];  a[mid] = t;
-	        }
+            if (a[mid] < a[lo]) {
+                t = a[mid];  a[mid] = a[lo];  a[lo] = t;
+            }
+            if (a[hi] < a[lo]) {
+                t = a[hi];  a[hi] = a[lo];  a[lo] = t;
+            }
+            if (a[hi] < a[mid]) {
+                t = a[hi];  a[hi] = a[mid];  a[mid] = t;
+            }
 
             t = a[mid];  a[mid] = a[hi];  a[hi] = t;
         
