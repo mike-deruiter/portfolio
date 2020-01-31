@@ -34,12 +34,12 @@ if [ $# -lt 1 ]; then
 fi
 
 # gather all the files containing cards to study
-files=""
+files="/tmp/cards.$$"
 for i in $@; do
     if [ ! -e $FLASHCARD_DIR/$i ]; then
         show_usage "$PROGNAME: Flashcards not found." 2
     fi
-    files="$FLASHCARD_DIR/$i "$files
+    tail -n +2 $FLASHCARD_DIR/$i >> $files
 done
 
 # append title to temporary deck
@@ -147,4 +147,4 @@ PERCENTAGE=$(echo "scale=2; ($num_correct / $NUM_CARDS) * 100" | bc | \
 echo Correct: $PERCENTAGE%
 
 touch /tmp/wrong.$$
-rm /tmp/shuffle.$$ /tmp/wrong.$$    # clean up
+rm /tmp/cards.$$ /tmp/shuffle.$$ /tmp/wrong.$$ # clean up
