@@ -46,7 +46,7 @@ done
 if [ $# -eq 1 ]; then
     head -1 $FLASHCARD_DIR/$1 > /tmp/shuffle.$$
 else
-    echo Flashcard Set > /tmp/shuffle.$$
+    echo Multiple Flashcards > /tmp/shuffle.$$
 fi
 
 # shuffle deck & store in temporary deck
