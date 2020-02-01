@@ -127,7 +127,7 @@ done
 
 for user in $(cat $USERNAMES_FILE | sort); do
     rand_passwd=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 8 | head -1)
-    # For Demonstration Purpose - Don't execute the commands
+    # For Demonstration Purposes - Don't execute the commands
     echo "useradd $user"
     echo "echo $user:$rand_passwd | sudo chpasswd"
     echo "$user : $rand_passwd" >> $LOG_FILE

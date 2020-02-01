@@ -32,6 +32,7 @@ int_to_char() {
 }
 
 move_user() {
+    # For Demonstration Purposes - don't execute commands
     echo "usermod -l $2 $1"
     echo "groupmod -n $2 $1"
     echo "usermod -md $HOME_DIR/$2 $1"
