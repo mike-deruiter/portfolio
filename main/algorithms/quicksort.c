@@ -27,7 +27,7 @@ int pop(Stack *s);
 int peek(Stack *s);
 bool stack_empty(Stack *s);
 
-void init_array(int a[], int n);
+void init_rand_array(int a[], int n);
 void quicksort(int a[], int n);
 void output_array(int a[], int l, int r);
 
@@ -35,14 +35,14 @@ int main()
 {
     int a[N+1];
 
-    init_array(a, N);
+    init_rand_array(a, N);
     quicksort(a, N);
     output_array(a, 1, N);
 
     return 0;
 }
 
-/* init_stack */
+/* init_stack - create stack object */
 Stack *init_stack(int size) {
     Stack *s;
 
@@ -68,11 +68,13 @@ int peek(Stack *s) {
     return s->stack[s->top];
 }
 
+/* stack_empty - returns true if stack is empty */
 bool stack_empty(Stack *s) {
     return s->top == -1 ? true : false;
 }
 
-void init_array(int a[], int n)
+/* init_rand_array - initialize random array of size n */
+void init_rand_array(int a[], int n)
 {
     int i;
 
@@ -85,6 +87,19 @@ void init_array(int a[], int n)
     }
 }
 
+/* output_array - output contents of array between specified bounds */
+void output_array(int a[], int l, int r)
+{
+    int i;
+ 
+    for (i = l; i <= r; ++i) {
+        printf("%2d ", a[i]);
+    }
+ 
+    putchar('\n');
+}
+
+/* quicksort - non-recursive quicksort w/ median-of-three partitioning */
 void quicksort(int a[], int n)
 {
     int p, i, j, l, r, t;
@@ -121,13 +136,13 @@ void quicksort(int a[], int n)
                     break;
                 }
                 
-                //printf("%2d <-> %2d; ", a[i], a[j]);
+                //printf("%2d <-> %2d; ", a[i], a[j]); //DEBUG
                 t = a[i];  a[i] = a[j];  a[j] = t;
             }
     
-            //printf("%2d <-> %2d; ", a[i], a[r]);
+            //printf("%2d <-> %2d; ", a[i], a[r]); //DEBUG
             t = a[i];  a[i] = a[r];  a[r] = t;
-            //putchar('\n');
+            //putchar('\n'); //DEBUG
     
             if (i-1 > r-i) {
                 push(stack, l);    push(stack, i-1);  l = i+1;
@@ -142,15 +157,4 @@ void quicksort(int a[], int n)
     
         r = pop(stack);  l = pop(stack);
     }
-}
-
-void output_array(int a[], int l, int r)
-{
-    int i;
- 
-    for (i = l; i <= r; ++i) {
-        printf("%2d ", a[i]);
-    }
- 
-    putchar('\n');
 }
