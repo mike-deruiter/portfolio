@@ -1,43 +1,16 @@
 // TODO: rewrite "print_heap()" to resemble the Unix utility "tree"
 
 /* heap - simple program demonstrating an array-based heap for educational
- *        purposes. Not perfect -- the print_heap() method is a kludge.
- *
- * Copyright (c) 2017, Mike DeRuiter
- * send bugs to: aynrandjuggalo@gmail.com
- *
- * Redistribution and use in source and binary forms, with or without 
- * modification, are permitted provided that the following condition is met:
- *   1) Redistributions of source code (if you're distributing a binary you
- *      don't have to bother. This source is potentially interesting for 
- *      educational purposes but the program itself is hardly the GNU 
- *      compiler) must retain the above copyright notice (please remove the 
- *      bit about sending bug reports to me), this list of one whole 
- *      condition (including the funny parts) & the following disclaimer:
- * 
- * THIS SOFTWARE IS PROVIDED BY THE AUTHOR AND CONTRIBUTORS ''AS IS'' AND ANY 
- * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED 
- * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE 
- * DISCLAIMED. IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE FOR ANY 
- * DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES 
- * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR 
- * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER 
- * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT 
- * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY 
- * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF 
- * SUCH DAMAGE.                                                               
- *
- * THIS DISCLAIMER HAS SUPER COW POWERS. (You have to include this part too
- * b/c it's funny to me)                                                      */ 
+ *        purposes. Not perfect -- the print_heap() method is a kludge. */
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
 
-/* this program is only able to print 7 or less nodes, so don't make this
-   value bigger unless you rewrite the print_heap() function.             */
 #define BUFFER_SIZE     50
 #define BUFFER_INCREASE 25
+/* this program is only able to print 7 or less nodes, so don't make this
+   value bigger unless you rewrite the print_heap() function.             */
 #define NUMBERS_TO_ADD  7
 
 void heap_insert(int n);
