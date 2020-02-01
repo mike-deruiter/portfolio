@@ -1,3 +1,5 @@
+//TODO: Refactor HEAP_BUFFER_SIZE
+
 #include "heap.h"
 #include <stdlib.h>
 
