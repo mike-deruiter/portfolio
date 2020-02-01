@@ -157,4 +157,6 @@ void quicksort(int a[], int n)
     
         r = pop(stack);  l = pop(stack);
     }
+    
+    free(stack);
 }
