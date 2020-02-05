@@ -4,7 +4,7 @@
 #include <stdlib.h>
 #include <time.h>
 
-#include "stack.h"
+#include "datastruct/stack.h"
 
 #if __STDC_VERSION__ >= 199901L
 #include <stdbool.h>

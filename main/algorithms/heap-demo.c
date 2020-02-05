@@ -7,7 +7,7 @@
 #include <stdlib.h>
 #include <time.h>
 
-#include "heap.h"
+#include "datastruct/heap.h"
 
 /* this program is only able to print 7 or less nodes, so don't make this
    value bigger unless you rewrite the print_heap() function.             */
