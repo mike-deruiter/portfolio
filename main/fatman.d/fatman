@@ -1,5 +1,8 @@
 #!/usr/bin/python3
 
+#TODO: Get sect_per_fat
+#TODO: Get num_fat
+
 def bytes_to_ascii(byte_str):
     byte_str = byte_str.replace(b'\x00', b'')
     return byte_str.decode('ascii')
@@ -10,7 +13,7 @@ def bytes_to_int(byte_str, order = 'little'):
 class Volume():
     def __init__(self, fname):
         self.volume = open(fname, "rb")
-        self.read_boot_sector(volume)
+        self.read_boot_sector(self.volume)
         
     def read_boot_sector(self, vol):
         vol.seek(3)
@@ -18,7 +21,17 @@ class Volume():
         self.bytes_per_sect = bytes_to_int(vol.read(2))
         self.sect_per_clust = bytes_to_int(vol.read(1))
         self.reserved_sect = bytes_to_int(vol.read(2))
-        self.seek(27)
-        self.volume_label = bytes_to_ascii(read(11))
-        self.fs_type = bytes_to_ascii(read(8)).rstrip()
-        self.seek(450)
+        vol.seek(43)
+        self.volume_label = bytes_to_ascii(vol.read(11))
+        self.fs_type = bytes_to_ascii(vol.read(8)).rstrip()
+    
+    def print_info(self):
+        print('Filesystem Type:     {0}'.format(self.fs_type))
+        print('OEM ID:              {0}'.format(self.oem_id))
+        print('Volume Label:        {0}'.format(self.volume_label))
+        print('Bytes Per Sector:    {0}'.format(self.bytes_per_sect))
+        print('Sectors Per Cluster: {0}'.format(self.sect_per_clust))
+        print('Reserved Sectors:    {0}'.format(self.reserved_sect))
+        
+v = Volume('fat-img-kw.dd')
+v.print_info()
