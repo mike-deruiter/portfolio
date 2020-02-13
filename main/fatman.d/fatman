@@ -1,0 +1,24 @@
+#!/usr/bin/python3
+
+def bytes_to_ascii(byte_str):
+    byte_str = byte_str.replace(b'\x00', b'')
+    return byte_str.decode('ascii')
+    
+def bytes_to_int(byte_str, order = 'little'):
+    return int.from_bytes(byte_str, byteorder = order)
+
+class Volume():
+    def __init__(self, fname):
+        self.volume = open(fname, "rb")
+        self.read_boot_sector(volume)
+        
+    def read_boot_sector(self, vol):
+        vol.seek(3)
+        self.oem_id = bytes_to_ascii(vol.read(8))
+        self.bytes_per_sect = bytes_to_int(vol.read(2))
+        self.sect_per_clust = bytes_to_int(vol.read(1))
+        self.reserved_sect = bytes_to_int(vol.read(2))
+        self.seek(27)
+        self.volume_label = bytes_to_ascii(read(11))
+        self.fs_type = bytes_to_ascii(read(8)).rstrip()
+        self.seek(450)
