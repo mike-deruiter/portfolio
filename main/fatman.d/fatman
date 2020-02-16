@@ -60,25 +60,31 @@ class Volume():
         file = b''
         fsize_sofar = 0
         
-        i_clust = bytes(i_clust)
-        
-        while i_clust not in self.EOF:
-            i_clust = bytes_to_int(i_clust)
+        while True:
+            if isinstance(i_clust, (bytes, bytearray)):
+                i_clust = bytes_to_int(i_clust)
+            
             self.vol.seek(self.data_region_start + 
                           self.sectors_to_bytes(i_clust *
                                                 self.sect_per_clust))
         
-            fsize_sofar = fsize_sofar + self.bytes_per_sect
-            if fsize_sofar > fsize:
-                bytes_to_read = fsize_sofar - fsize
+            if fsize >= self.sectors_to_bytes(self.sect_per_clust):
+                fsize = fsize - self.sectors_to_bytes(self.sect_per_clust)
+                bytes_to_read = self.sectors_to_bytes(self.sect_per_clust)
             else:
-                bytes_to_read = self.bytes_per_sect
+                bytes_to_read = fsize
                 
             file = file + self.vol.read(bytes_to_read)
-        
+            
             self.vol.seek(self.fat_region_start + 
                           self.sectors_to_bytes(i_clust))
+                          
             i_clust = self.vol.read(2)
+        
+            if i_clust in self.EOF:
+                break
+            
+            
             
    
         return file
@@ -102,7 +108,7 @@ class DirectoryEntry():
         
         self.fname = bytes_to_ascii(self.dir_entry.read(8))
         self.f_ext = bytes_to_ascii(self.dir_entry.read(3))
-        self.dir_entry.seek(-6, 2)
+        self.dir_entry.seek(26)
         self.starting_clust = bytes_to_int(self.dir_entry.read(2))
         self.filesize = bytes_to_int(self.dir_entry.read(4))
         
@@ -124,6 +130,7 @@ d.print_info()
 
 print()
 
-f = v.return_file(d.starting_clust, d.filesize)
+rf = v.return_file(d.starting_clust, d.filesize)
 
-print('{0}'.format(f))
+of = open(d.filename, 'wb')
+of.write(rf)
