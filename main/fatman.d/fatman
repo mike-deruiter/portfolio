@@ -2,7 +2,7 @@
 
 #TODO: Get possible_root_entries
 
-import io
+import io, array
 
 def bytes_to_ascii(byte_str):
     byte_str = byte_str.replace(b'\x00', b'')
@@ -12,7 +12,7 @@ def bytes_to_int(byte_str, order = 'little'):
     return int.from_bytes(byte_str, byteorder = order)
 
 class Volume():
-    EOF = [b'\xff\xff', b'\xf8\xff']
+    EOF = [b'\xff\xff', b'\x00\x00']
 
     def __init__(self, fname):
         self.vol = open(fname, "rb")
@@ -56,16 +56,15 @@ class Volume():
     def sectors_to_bytes(self, sectors):
         return sectors * self.bytes_per_sect
     
-    def return_file(self, i_clust, fsize):
+    def return_file(self, i_clust, fsize, deleted = False):
         file = b''
         fsize_sofar = 0
         
         while True:
-            if isinstance(i_clust, (bytes, bytearray)):
-                i_clust = bytes_to_int(i_clust)
+            i_clust = bytes_to_int(i_clust, 'little')
             
             self.vol.seek(self.data_region_start + 
-                          self.sectors_to_bytes(i_clust *
+                          self.sectors_to_bytes((i_clust - 1) *
                                                 self.sect_per_clust))
         
             if fsize >= self.sectors_to_bytes(self.sect_per_clust):
@@ -73,20 +72,23 @@ class Volume():
                 bytes_to_read = self.sectors_to_bytes(self.sect_per_clust)
             else:
                 bytes_to_read = fsize
+                deleted = False # Break deleted loop
                 
             file = file + self.vol.read(bytes_to_read)
             
-            self.vol.seek(self.fat_region_start + 
-                          self.sectors_to_bytes(i_clust))
-                          
-            i_clust = self.vol.read(2)
-        
+            if not deleted:              
+                self.vol.seek(self.fat_region_start + (i_clust * 2))
+            
+                i_clust = self.vol.read(2)
+            else:
+                i_clust = int.to_bytes(i_clust + 1, 'little')
+            
+            print('next cluster: {0}'.format(i_clust))
+            
             if i_clust in self.EOF:
-                break
+                break        
             
-            
-            
-   
+        
         return file
     
     def print_info(self):
@@ -106,31 +108,59 @@ class DirectoryEntry():
     def __init__(self, byte_str):
         self.dir_entry = io.BytesIO(byte_str)
         
-        self.fname = bytes_to_ascii(self.dir_entry.read(8))
+        self.fname = self.dir_entry.read(8)
+        fname_dissect = array.array('B', self.fname)
+        if fname_dissect[0] == 0:
+            raise Exception
+        elif fname_dissect[0] == 229: #b'\xe5'
+            self.deleted = True
+            fname_dissect[0] = 126 #b'~'
+        else:
+            self.deleted = False
+    
+        self.fname = bytes_to_ascii(fname_dissect.tobytes())
+        print(self.fname)
+        
         self.f_ext = bytes_to_ascii(self.dir_entry.read(3))
         self.dir_entry.seek(26)
-        self.starting_clust = bytes_to_int(self.dir_entry.read(2))
+        self.starting_clust = self.dir_entry.read(2)
         self.filesize = bytes_to_int(self.dir_entry.read(4))
         
-        self.filename = '{0}.{1}'.format(self.fname, self.f_ext)
+        if self.f_ext != '':
+            self.filename = '{0}.{1}'.format(self.fname, self.f_ext)
+        else:
+            self.filename = '{0}'.format(self.fname)
         
     def print_info(self):
         print('Filename:        {0}'.format(self.filename))
         print('File Size:       {0}'.format(self.filesize))
-        print('Starting Cluster {0}'.format(hex(self.starting_clust)))
+        print('Starting Cluster {0}'.format(
+                                     hex(bytes_to_int(self.starting_clust))))
         
 v = Volume('fat-img-kw.dd')
 v.print_info()
-
 print()
 
-v.vol.seek(v.root_dir_start + 32)
-d = DirectoryEntry(v.vol.read(32))
-d.print_info()
+offset = 32
+more_to_read = True
+while more_to_read:
+    v.vol.seek(v.root_dir_start + offset)
+    try:
+        d = DirectoryEntry(v.vol.read(32))
+    except Exception:
+        more_to_read = False
+        continue
+    offset = offset + 64
+    d.print_info()
 
-print()
+    print()
 
-rf = v.return_file(d.starting_clust, d.filesize)
-
-of = open(d.filename, 'wb')
-of.write(rf)
+    rf = v.return_file(d.starting_clust, d.filesize)
+    of = open(d.filename, 'wb')
+   
+    print()
+    print('Writing {0}...'.format(d.fname))
+    
+    of.write(rf)
+    print('Success.')
+    print()
