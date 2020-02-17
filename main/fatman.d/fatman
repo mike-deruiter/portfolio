@@ -135,11 +135,11 @@ class DirectoryEntry():
         print('Starting Cluster {0}'.format(
                                      hex(bytes_to_int(self.starting_clust))))
         
-v = Volume('fat-img-kw.dd')
+v = Volume('mike-test.dd')
 v.print_info()
 print()
 
-offset = 32
+offset = 64
 more_to_read = True
 while more_to_read:
     v.vol.seek(v.root_dir_start + offset)
