@@ -5,7 +5,7 @@
 import io, array
 
 def bytes_to_ascii(byte_str):
-    byte_str = byte_str.replace(b'\x00', b'')
+    #byte_str = byte_str.replace(b'\x00', b'')
     return byte_str.decode('ascii').rstrip()
     
 def bytes_to_int(byte_str, order = 'little'):
@@ -119,8 +119,6 @@ class DirectoryEntry():
             self.deleted = False
     
         self.fname = bytes_to_ascii(fname_dissect.tobytes())
-        print(self.fname)
-        
         self.f_ext = bytes_to_ascii(self.dir_entry.read(3))
         self.dir_entry.seek(26)
         self.starting_clust = self.dir_entry.read(2)
@@ -145,12 +143,15 @@ offset = 32
 more_to_read = True
 while more_to_read:
     v.vol.seek(v.root_dir_start + offset)
+
     try:
         d = DirectoryEntry(v.vol.read(32))
     except Exception:
         more_to_read = False
         continue
+
     offset = offset + 64
+
     d.print_info()
 
     print()
@@ -159,8 +160,9 @@ while more_to_read:
     of = open(d.filename, 'wb')
    
     print()
-    print('Writing {0}...'.format(d.fname))
+    print('Writing {0}...'.format(d.filename))
     
     of.write(rf)
+
     print('Success.')
     print()
