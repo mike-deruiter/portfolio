@@ -136,7 +136,8 @@ class DirectoryEntry():
         
     def print_info(self):
         print('Filename:        {0}'.format(self.filename))
-        print('Attribute Byte:  {0}'.format(hex(self.attr))
+        print('Attribute Byte:  {0}'.format(hex(int.from_bytes(self.attr, 
+                                                               'little'))))
         print('File Size:       {0}'.format(self.filesize))
         print('Starting Cluster {0}'.format(
                                      hex(bytes_to_int(self.starting_clust))))
