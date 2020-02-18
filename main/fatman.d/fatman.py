@@ -1,8 +1,10 @@
 #!/usr/bin/python3
 
-#TODO: Get possible_root_entries
+import io, sys, array
 
-import io, array
+if len(sys.argv) == 1:
+    print("Please supply a .dd file to parse.")
+    exit(1)
 
 def bytes_to_ascii(byte_str):
     #byte_str = byte_str.replace(b'\x00', b'')
@@ -67,7 +69,6 @@ class Volume():
             self.vol.seek(self.data_region_start + 
                           self.sectors_to_bytes((i_clust - 2) *
                                                 self.sect_per_clust))
-            print(self.data_region_start + self.sectors_to_bytes((i_clust - 2) * self.sect_per_clust))
         
             if fsize >= self.sectors_to_bytes(self.sect_per_clust):
                 fsize = fsize - self.sectors_to_bytes(self.sect_per_clust)
@@ -148,10 +149,13 @@ class DirectoryEntry():
             print('File Size:       {0}'.format(self.filesize))
             print('Starting Cluster {0}'.format(
                   hex(bytes_to_int(self.starting_clust))))
-        
-v = Volume('00-mike-test.dd')
-v.print_info()
-print()
+try:        
+    v = Volume(sys.argv[1])
+    v.print_info()
+    print()
+except Exception:
+    print("Invalid .dd file supplied.")
+    exit(2)
 
 deleted_files = []
 
