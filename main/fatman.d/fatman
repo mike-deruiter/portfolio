@@ -83,7 +83,7 @@ class Volume():
             else:
                 i_clust = int.to_bytes(i_clust + 1, 'little')
             
-            print('next cluster: {0}'.format(i_clust))
+            #print('next cluster: {0}'.format(i_clust))
             
             if i_clust in self.EOF:
                 break        
@@ -135,18 +135,19 @@ class DirectoryEntry():
             self.filename = '{0}'.format(self.fname)
         
     def print_info(self):
-        print('Filename:        {0}'.format(self.filename))
-        print('Attribute Byte:  {0}'.format(hex(int.from_bytes(self.attr, 
-                                                               'little'))))
-        print('File Size:       {0}'.format(self.filesize))
-        print('Starting Cluster {0}'.format(
-                                     hex(bytes_to_int(self.starting_clust))))
+        if d.attr == b'\x20':
+            print('Filename:        {0}'.format(self.filename))
+            print('Attribute Byte:  {0}'.format(hex(int.from_bytes(self.attr, 
+                                                                   'little'))))
+            print('File Size:       {0}'.format(self.filesize))
+            print('Starting Cluster {0}'.format(
+                  hex(bytes_to_int(self.starting_clust))))
         
 v = Volume('00-mike-test.dd')
 v.print_info()
 print()
 
-offset = 64
+offset = 0
 more_to_read = True
 while more_to_read:
     v.vol.seek(v.root_dir_start + offset)
@@ -157,19 +158,19 @@ while more_to_read:
         more_to_read = False
         continue
 
-    offset = offset + 64
+    offset = offset + 32
 
     d.print_info()
 
-    print()
-
-    rf = v.return_file(d.starting_clust, d.filesize)
-    of = open(d.filename, 'wb')
+    if d.attr == b'\x20':   
+        print()
+        
+        rf = v.return_file(d.starting_clust, d.filesize)
+        of = open(d.filename, 'wb')
    
-    print()
-    print('Writing {0}...'.format(d.filename))
+        print('Writing {0}...'.format(d.filename))
     
-    of.write(rf)
+        of.write(rf)
 
-    print('Success.')
-    print()
+        print('Success.')
+        print()
