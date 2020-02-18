@@ -64,7 +64,7 @@ class Volume():
             i_clust = bytes_to_int(i_clust, 'little')
             
             self.vol.seek(self.data_region_start + 
-                          self.sectors_to_bytes((i_clust - 1) *
+                          self.sectors_to_bytes((i_clust - 2) *
                                                 self.sect_per_clust))
         
             if fsize >= self.sectors_to_bytes(self.sect_per_clust):
@@ -112,13 +112,13 @@ class DirectoryEntry():
         fname_dissect = array.array('B', self.fname)
         if fname_dissect[0] == 0:
             raise Exception
-        elif fname_dissect[0] == 229: #b'\xe5'
+        elif fname_dissect[0] == 229: # b'\xe5'
             self.deleted = True
-            fname_dissect[0] = 126 #b'~'
+            fname_dissect[0] = 126 # b'~'
         else:
             self.deleted = False
-    
         self.fname = bytes_to_ascii(fname_dissect.tobytes())
+        
         self.f_ext = bytes_to_ascii(self.dir_entry.read(3))
         self.dir_entry.seek(26)
         self.starting_clust = self.dir_entry.read(2)
