@@ -92,21 +92,26 @@ class Volume():
         return file
     
     def print_info(self):
-        print('Filesystem Type:      {0}'.format(self.fs_type))
-        print('OEM ID:               {0}'.format(self.oem_id))
-        print('Volume Label:         {0}'.format(self.volume_label))
-        print('Bytes Per Sector:     {0}'.format(self.bytes_per_sect))
-        print('Sectors Per Cluster:  {0}'.format(self.sect_per_clust))
-        print('Reserved Sectors:     {0}'.format(self.reserved_sect))
-        print('Number of FAT:        {0}'.format(self.num_fat))
-        print('Sectors Per FAT:      {0}'.format(self.sect_per_fat))
-        print('FAT Region Start:     {0}'.format(hex(self.fat_region_start)))
-        print('Root Directory Start: {0}'.format(hex(self.root_dir_start)))
-        print('Data Region Start:    {0}'.format(hex(self.data_region_start)))
+        print('Filesystem Type:       {0}'.format(self.fs_type))
+        print('OEM ID:                {0}'.format(self.oem_id))
+        print('Volume Label:          {0}'.format(self.volume_label))
+        print('Bytes Per Sector:      {0}'.format(self.bytes_per_sect))
+        print('Sectors Per Cluster:   {0}'.format(self.sect_per_clust))
+        print('Reserved Sectors:      {0}'.format(self.reserved_sect))
+        print('Number of FAT:         {0}'.format(self.num_fat))
+        print('Possible Root Entries: {0}'.format(self.poss_root_entries))
+        print('Sectors Per FAT:       {0}'.format(self.sect_per_fat))
+        print('FAT Region Start:      {0}'.format(hex(self.fat_region_start)))
+        print('Root Directory Start:  {0}'.format(hex(self.root_dir_start)))
+        print('Data Region Start:     {0}'.format(hex(self.data_region_start)))
         
 class DirectoryEntry():
     def __init__(self, byte_str):
         self.dir_entry = io.BytesIO(byte_str)
+        
+        self.dir_entry.seek(11)
+        self.attr = self.dir_entry.read(1)
+        self.dir_entry.seek(0)
         
         self.fname = self.dir_entry.read(8)
         fname_dissect = array.array('B', self.fname)
@@ -131,11 +136,12 @@ class DirectoryEntry():
         
     def print_info(self):
         print('Filename:        {0}'.format(self.filename))
+        print('Attribute Byte:  {0}'.format(hex(self.attr))
         print('File Size:       {0}'.format(self.filesize))
         print('Starting Cluster {0}'.format(
                                      hex(bytes_to_int(self.starting_clust))))
         
-v = Volume('mike-test.dd')
+v = Volume('00-mike-test.dd')
 v.print_info()
 print()
 
