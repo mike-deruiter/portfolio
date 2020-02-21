@@ -1,6 +1,8 @@
 #!/usr/bin/python3
 
-#TODO: Get possible_root_entries
+#TODO: Update delete-recovery code
+#TODO: Recursively search folders
+#TODO: Interactive shell
 
 import io, array
 
