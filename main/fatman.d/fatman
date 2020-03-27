@@ -1,6 +1,5 @@
 #!/usr/bin/python3
 
-#TODO: Update delete-recovery code
 #TODO: Recursively search folders
 #TODO: Interactive shell
 
@@ -89,14 +88,11 @@ class Volume():
                     peek = self.vol.read(2)
                     if peek in [b'\x00\x00']:
                         break
-
-
             
             #print('next cluster: {0}'.format(i_clust))
             
             if i_clust in self.EOF:
-                break        
-            
+                break
         
         return file
     
