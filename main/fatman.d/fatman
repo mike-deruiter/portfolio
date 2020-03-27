@@ -83,7 +83,14 @@ class Volume():
             
                 i_clust = self.vol.read(2)
             else:
-                i_clust = int.to_bytes(i_clust + 1, 'little')
+                while True:
+                    i_clust = int.to_bytes(i_clust + 1, 'little')
+                    self.vol.seek(self.fat_region_start + (i_clust * 2))
+                    peek = self.vol.read(2)
+                    if peek == 0:
+                        break
+
+
             
             #print('next cluster: {0}'.format(i_clust))
             
