@@ -6,12 +6,14 @@
 #
 #             Ex: "snippet abcde 0 3" -> "abc"
 
+#TODO: Check if bc is installed
+
 set -eu
 
 MAX_CAPTURE_GROUPS=9
 
 string=$1  
-starting_pos=$2   
+starting_pos=$(expr $2 - 1)   
 snippet_length=$3
 
 cap_string=""
@@ -19,10 +21,14 @@ ret_string=""
 
 output=""
 
-outer_loop=$(echo "$snippet_length/$MAX_CAPTURE_GROUPS+1" | bc)
+outer_loop=$(expr $snippet_length / $MAX_CAPTURE_GROUPS + 1)
 end_seq=9
 
 actual_word_length=$(echo $string | wc -c)
+
+if [ $starting_pos -lt "0" ]; then
+    starting_pos=0
+fi
 
 last_char=$(expr $(expr $starting_pos + $snippet_length || true) + 1 || true)
 
