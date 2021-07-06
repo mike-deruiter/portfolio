@@ -122,8 +122,6 @@ int eval_postfix() {
 
     switch (p) {
         case ADD:
-            /* we can reduce the recursive calls if we assume the next item
-               in the stack is a number.                                    */
             a = pop(postfix);
             return eval_postfix() + a;
         case SUB:
