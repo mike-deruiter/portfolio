@@ -6,8 +6,6 @@
 #
 #             Ex: "snippet abcde 0 3" -> "abc"
 
-#TODO: Check if bc is installed
-
 set -eu
 
 MAX_CAPTURE_GROUPS=9
@@ -24,7 +22,7 @@ output=""
 outer_loop=$(expr $snippet_length / $MAX_CAPTURE_GROUPS + 1)
 end_seq=9
 
-actual_word_length=$(echo $string | wc -c)
+word_length=$(echo $string | wc -c)
 
 if [ $starting_pos -lt "0" ]; then
     starting_pos=0
@@ -32,8 +30,8 @@ fi
 
 last_char=$(expr $(expr $starting_pos + $snippet_length || true) + 1 || true)
 
-if [ $last_char -gt $actual_word_length ]; then
-    length_temp=$(expr $(expr $actual_word_length - $starting_pos || true) - 1 \
+if [ $last_char -gt $word_length ]; then
+    length_temp=$(expr $(expr $word_length - $starting_pos || true) - 1 \
                   || true)
 else
     length_temp=$snippet_length
