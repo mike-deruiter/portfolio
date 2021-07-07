@@ -1,9 +1,5 @@
 #!/usr/bin/python3
 
-#TODO: Throw specific exception in Parser.parse(), etc.
-#TODO: Remind self what exactly happens when "1)+2", etc. is written, figure out
-#      way to handle it more elegantly
-
 # calc3: Cook's Algebraic Calculator, version 3
 #   A simple calculator that allows floating-point arithmetic with variables.
 #   Variables are intialized with the command "load [VAR]". Memory is set
@@ -12,6 +8,13 @@
 #   calculator supports addition/subtraction, muliplication/division,
 #   exponentiation, unary plus & minus, & a square root function. The
 #   program is exited with the command "exit".
+
+#TODO: Throw specific exception in Parser.parse(), etc.
+#TODO: Remind self what exactly happens when "1)+2", etc. is written, figure out
+#      way to handle it more elegantly
+#TODO: Scrap Token class, use Binary_Token only & rename
+#TODO: Scrap load command
+#TODO: Clean up parse function 
 
 import sys, re, math
 
