@@ -1,4 +1,4 @@
-#!/usr/bin/python3
+#!/bin/env python3
 
 # calc3: Cook's Algebraic Calculator, version 3
 #   A simple calculator that allows floating-point arithmetic with variables.
@@ -12,9 +12,6 @@
 #TODO: Throw specific exception in Parser.parse(), etc.
 #TODO: Remind self what exactly happens when "1)+2", etc. is written, figure out
 #      way to handle it more elegantly
-#TODO: Scrap Token class, use Binary_Token only & rename
-#TODO: Scrap load command
-#TODO: Clean up parse function 
 
 import sys, re, math
 
@@ -217,7 +214,7 @@ class Parser():
 
 class Lexer():
     curr = None
-    cmds = ["load", "mem", "print", "exit"]
+    cmds = ["mem", "print", "exit"]
     funcs = ["sqrt"]
     
     def __init__(self):
@@ -367,8 +364,8 @@ class InputStream():
         return (self.pos == len(self.str_in))
         
 class Symbol:
-    def __init__(self, tt, v):
-        self.name = tt
+    def __init__(self, n, v):
+        self.name = n
         self.value = v
 
 class Token:
@@ -418,22 +415,6 @@ def evaluate(tkn):
     elif tkn.op.token_type == "COMMAND":
         if tkn.op.value == "exit":
             sys.exit()
-        elif tkn.op.value == "load":
-            var_name = tkn.right.value
-            if not symbol_table_indexOf(var_name) == -1:
-                print("Error: " + var_name + " already exists")
-                raise Exception
-            else:
-                sys.stdout.write("Enter value for " + var_name + ": ")
-                sys.stdout.flush()
-                try:
-                    user_input = sys.stdin.readline()
-                except KeyboardInterrupt:
-                    print()
-                    raise Exception
-                s = Symbol(var_name, float(user_input))
-                symbol_table.append(s)
-                raise Exception # Not really an error
         elif tkn.op.value == "mem":
             var_name = tkn.right.value
             if not symbol_table_indexOf(var_name) == -1:
