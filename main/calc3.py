@@ -10,6 +10,7 @@
 #   program is exited with the command "exit".
 
 #TODO: Throw specific exception in Parser.parse(), etc.
+#TODO: Display whole numbers without decimal part
 
 import sys, re, math
 
