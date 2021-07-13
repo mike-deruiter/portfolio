@@ -15,13 +15,14 @@
 #TODO: Constants can be case-insensitive
 
 # Features to include in calc5:
+#   - Remove Operation class, make type of Token
 #   - Complex numbers
 #   - Revised rt() function?
 
 import sys, re, math
 
 symbol_table = {}
-DEBUG = True
+DEBUG = False
 
 '''
 The Grammar:
@@ -58,7 +59,7 @@ class Parser():
     def parse_line(self):
         if (self.lexer.peek().token_type == "COMMAND"):
             cmd = self.lexer.next()
-            return Node(cmd, None, None)
+            return cmd
         elif (self.lexer.peek().token_type == "VAR"):
             return self.parse_asgn()
         else:
@@ -76,7 +77,7 @@ class Parser():
         
         right = self.parse_addition()
         
-        return Node(op, var, right)
+        return Operation(op, var, right)
         
     def parse_addition(self):
         expr = self.parse_multiplication()
@@ -98,7 +99,7 @@ class Parser():
                  
                 right = self.parse_multiplication()
                 
-                expr = Node(oper, expr, right)
+                expr = Operation(oper, expr, right)
                 
                 o = self.lexer.peek()
                                
@@ -128,7 +129,7 @@ class Parser():
                 
                 right = self.parse_exponentiation()
                 
-                expr = Node(oper, expr, right)
+                expr = Operation(oper, expr, right)
                 
                 o = self.lexer.peek()
                 
@@ -151,7 +152,7 @@ class Parser():
         
         right = self.parse_unary()
         
-        return Node(e, left, right)
+        return Operation(e, left, right)
         
     def parse_unary(self):
         tkn = self.lexer.peek()
@@ -162,7 +163,7 @@ class Parser():
         right = self.parse_function() 
 
         tkn.token_type = "UNARY"         
-        return Node(tkn, right, None)
+        return Operation(tkn, right, None)
     
     def parse_function(self):
         tkn = self.lexer.peek()
@@ -191,7 +192,7 @@ class Parser():
         
         self.lexer.next()
 
-        return Node(tkn, left, right)
+        return Operation(tkn, left, right)
         
     def parse_primary(self):
         p = self.lexer.peek()
@@ -224,7 +225,7 @@ class Lexer():
     curr = None
     cmds = ["exit", "clear"]
     funcs = ["rt", "log", "sin", "cos", "tan"]
-    consts = {"PI": 3.1415926, "E": 2.718281}
+    consts = {"PI": 3.1415926, "E": 2.7182818}
     
     def __init__(self):
         self.input_stream = None
@@ -301,7 +302,7 @@ class Lexer():
     def read_id(self):
         word = self.read_while(self.is_id)
         if self.is_const(word):
-            return Token("NUMBER", float(consts.get(word)))
+            return Token("NUMBER", float(self.consts.get(word)))
         elif self.is_cmd(word):
             token_type = "COMMAND"
         elif self.is_func(word):
@@ -324,7 +325,7 @@ class Lexer():
             return Token("COMMA", c)
         if c == '=':
             self.input_stream.next()
-            return Token("EQUALS", c)
+            return Token("ASSIGN", c)
         if self.is_decimal_pt(c) or self.is_digit(c):
             return self.read_number()
         if self.is_id(c):
@@ -395,7 +396,7 @@ class Token:
     def _debug_value(self):
         return self.value
 
-class Node:
+class Operation:
     def __init__(self, o, l, r):
         self.op = o
         self.left = l
@@ -410,32 +411,33 @@ class Node:
                              self.right._debug_value())
 
 def evaluate(e):
+    answer = None
     if type(e) is Token:
-        if e.token_type == "VAR":
+        if e.token_type == "COMMAND":
+            if e.value == "exit":
+                sys.exit()
+            else:
+                print("Error: " + var_name + " recognized, " +
+                "but not implemented.")
+                raise Exception
+        elif e.token_type == "VAR":
             var_name = e.value
             if symbol_table.get(var_name) == None:
                 symbol_table[var_name] = 0.0
-            return symbol_table[var_name]
+            answer = symbol_table[var_name]
         else:
-            return e.value # Returns value of NUMBER tokens
-    # Type of e assumed to be Node
-    elif e.op.token_type == "COMMAND":
-        if e.op.value == "exit":
-            sys.exit()
-        else:
-            print("Error: " + var_name + " recognized, " +
-                  "but not implemented.")
-            raise Exception
-    elif e.op.token_type == "EQUALS":
+            answer = e.value # Returns value of NUMBER tokens
+    # Type of e assumed to be Operation
+    elif e.op.token_type == "ASSIGN":
         b = evaluate(e.right)
         symbol_table[e.left.value] = b
         return None
     elif e.op.token_type == "UNARY":
         a = evaluate(e.right)
         if e.op.value == '-':
-            return -1 * a
+            answer = -1 * a
         else:
-            return math.fabs(a)
+            answer = math.fabs(a)
     elif e.op.token_type == "FUNCTION":
         a = evaluate(e.right)
         if e.op.value == "log":
@@ -443,13 +445,13 @@ def evaluate(e):
                 b = 10
             else:
                 b = evaluate(e.left)
-            return math.log(a, b)
+            answer = math.log(a, b)
         elif e.op.value == "rt":
             if e.left == None:
                 b = .5
             else:
                 b = 1 / evaluate(e.left)
-            return a ** b
+            answer = a ** b
         else:
             print("Error: " + e.op.value + " recognized, " +
                   "but not implemented.")
@@ -457,23 +459,28 @@ def evaluate(e):
     elif e.op.value == "+":
         a = evaluate(e.left)
         b = evaluate(e.right)
-        return a + b
+        answer = a + b
     elif e.op.value == "*":
         a = evaluate(e.left)
         b = evaluate(e.right)
-        return a * b
+        answer = a * b
     elif e.op.value == "-":
         a = evaluate(e.left)
         b = evaluate(e.right)
-        return a - b
+        answer = a - b
     elif e.op.value == "/":
         a = evaluate(e.left)
         b = evaluate(e.right)
-        return a / b
+        answer = a / b
     elif e.op.value == "^":
         a = evaluate(e.left)
         b = evaluate(e.right)
-        return a ** b
+        answer = a ** b
+
+    if answer == math.floor(answer):
+        answer = int(answer)
+
+    return answer
 
 while True:
     try:
@@ -501,8 +508,5 @@ while True:
         continue
     if ans == None:
         continue
-
-    if ans == math.floor(ans):
-        ans = int(ans)
 
     print("%s" % ans)
