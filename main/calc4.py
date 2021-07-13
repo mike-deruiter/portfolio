@@ -10,21 +10,20 @@
 #   program is exited with the command "exit".
 
 #TODO: Throw specific exception in Parser.parse(), etc.
-#TODO: Display whole numbers without decimal part
-#TODO: Add logarithm function
 
 import sys, re, math
 
-symbol_table = []
-DEBUG = False
+symbol_table = {}
+DEBUG = True
 
 '''
 The Grammar:
 
-line           =   COMMAND VAR
+line           =   COMMAND
                  | asgn
                  | addition
 asgn           =   VAR '=' addition
+                 | VAR
 addition       =   multiplication (('+' | '-') multiplication)*
 multiplication =   exponentiation (('*' | '/') exponentiation)*
 exponentiation =   unary ('^' unary)
@@ -52,11 +51,7 @@ class Parser():
     def parse_line(self):
         if (self.lexer.peek().token_type == "COMMAND"):
             cmd = self.lexer.next()
-            if cmd.value == "exit":
-                return Binary_Token(None, cmd, None)
-            if self.lexer.peek().token_type != "VAR":
-                raise Exception
-            return Binary_Token(None, cmd, self.lexer.next())
+            return Node(cmd, None, None)
         elif (self.lexer.peek().token_type == "VAR"):
             return self.parse_asgn()
         else:
@@ -74,7 +69,7 @@ class Parser():
         
         right = self.parse_addition()
         
-        return Binary_Token(var, op, right)
+        return Node(op, var, right)
         
     def parse_addition(self):
         expr = self.parse_multiplication()
@@ -96,7 +91,7 @@ class Parser():
                  
                 right = self.parse_multiplication()
                 
-                expr = Binary_Token(expr, oper, right)
+                expr = Node(oper, expr, right)
                 
                 o = self.lexer.peek()
                                
@@ -126,7 +121,7 @@ class Parser():
                 
                 right = self.parse_exponentiation()
                 
-                expr = Binary_Token(expr, oper, right)
+                expr = Node(oper, expr, right)
                 
                 o = self.lexer.peek()
                 
@@ -149,7 +144,7 @@ class Parser():
         
         right = self.parse_unary()
         
-        return Binary_Token(left, e, right)
+        return Node(e, left, right)
         
     def parse_unary(self):
         tkn = self.lexer.peek()
@@ -160,7 +155,7 @@ class Parser():
         right = self.parse_function() 
 
         tkn.token_type = "UNARY"         
-        return Binary_Token(None, tkn, right)
+        return Node(tkn, right, None)
     
     def parse_function(self):
         tkn = self.lexer.peek()
@@ -189,7 +184,7 @@ class Parser():
         
         self.lexer.next()
 
-        return Binary_Token(left, tkn, right)
+        return Node(tkn, left, right)
         
     def parse_primary(self):
         p = self.lexer.peek()
@@ -372,149 +367,124 @@ class InputStream():
     def eof(self):
         return (self.pos == len(self.str_in))
         
-class Symbol:
-    def __init__(self, n, v):
-        self.name = n
-        self.value = v
-
 class Token:
     def __init__(self, tt, v):
         self.token_type = tt
         self.value = v
 
-    #DEBUG
-    def get_value(self):
+    def _debug_value(self):
         return self.value
 
-class Binary_Token:
-    def __init__(self, l, o, r):
-        self.left = l
+class Node:
+    def __init__(self, o, l, r):
         self.op = o
+        self.left = l
         self.right = r
     
-    #DEBUG
-    def get_value(self):
-        if self.left == None:
-            return "%s (%s)" % (self.op.get_value(), self.right.get_value())
-        return "(%s) %s (%s)" % (self.left.get_value(), 
-                             self.op.get_value(), 
-                             self.right.get_value())
+    def _debug_value(self):
+        if self.right== None:
+            return "%s (%s)" % (self.op._debug_value(), self.left._debug_value())
+        return "%s (%s) (%s)" % (self.op._debug_value(), 
+                             self.left._debug_value(), 
+                             self.right._debug_value())
 
-def symbol_table_indexOf(var_name):
-    i = 0
-    for s in symbol_table:
-        if s.name == var_name:
-            return i
-        i+=1
-    
-    return -1
-
-def evaluate(tkn):
-    if type(tkn) is Token:
-        if tkn.token_type == "VAR":
-            var_name = tkn.value
-            if symbol_table_indexOf(var_name) == -1:
-                print("Error: " + var_name + " doesn't exist")
-                raise Exception
-            else:
-                return symbol_table[symbol_table_indexOf(
-                       var_name)].value
+def evaluate(e):
+    if type(e) is Token:
+        if e.token_type == "VAR":
+            var_name = e.value
+            if symbol_table[var_name] == None:
+                symbol_table[var_name] = 0.0
+            return symbol_table[var_name]
         else:
-            return tkn.value # Returns value of NUMBER tokens
-    elif tkn.op.token_type == "COMMAND":
-        if tkn.op.value == "exit":
+            return e.value # Returns value of NUMBER tokens
+    # Type of e assumed to be Node
+    elif e.op.token_type == "COMMAND":
+        if e.op.value == "exit":
             sys.exit()
-        elif tkn.op.value == "mem":
-            var_name = tkn.right.value
-            if not symbol_table_indexOf(var_name) == -1:
-                print("Error: " + var_name + " already exists")
-                raise Exception
-            else:
-                s = Symbol(var_name, 0.0)
-                symbol_table.append(s)
-                raise Exception
-        elif tkn.op.value == "print":
-            var_name = tkn.right.value
-            if symbol_table_indexOf(var_name) == -1:
-                print("Error: " + var_name + " doesn't exist")
-                raise Exception
-            else:
-                s = symbol_table[symbol_table_indexOf(var_name)]
-                return s.value
-    elif tkn.op.token_type == "EQUALS":
-        var_name = tkn.left.value
-        i = symbol_table_indexOf(var_name)
-        if i == -1:
-            print("Error: " + var_name + " doesn't exist")
+        else:
+            print("Error: " + var_name + " recognized, " +
+                  "but not implemented.")
             raise Exception
-        b = evaluate(tkn.right)
-        symbol_table[i].value = b
-        raise Exception # Not really an error
-    elif tkn.op.token_type == "UNARY":
-        a = evaluate(tkn.right)
-        if tkn.op.value == '-':
+    elif e.op.token_type == "EQUALS":
+        b = evaluate(e.right)
+        symbol_table[e.left.value] = b
+        return None
+    elif e.op.token_type == "UNARY":
+        a = evaluate(e.right)
+        if e.op.value == '-':
             return -1 * a
         else:
             return math.fabs(a)
-    elif tkn.op.token_type == "FUNCTION":
-        if tkn.op.value == "sqrt":
-            a = evaluate(tkn.right)
-            return math.sqrt(a)
+    elif e.op.token_type == "FUNCTION":
+        a = evaluate(e.right)
+
+        if e.op.value == "log":
+            if e.left == None:
+                b = 10
+            else:
+                b = evaluate(e.left)
+
+            return math.log(a, b)
+        elif e.op.value == "root":
+            if e.left == None:
+                b = .5
+            else:
+                b = 1 / evaluate(e.left)
+
+            return a ** b
         else:
-            print("Error: " + tkn.op.value + " recognized, " +
+            print("Error: " + e.op.value + " recognized, " +
                   "but not implemented.")
             raise Exception
-    elif tkn.op.value == "+":
-        a = evaluate(tkn.left)
-        b = evaluate(tkn.right)
+    elif e.op.value == "+":
+        a = evaluate(e.left)
+        b = evaluate(e.right)
         return a + b
-    elif tkn.op.value == "*":
-        a = evaluate(tkn.left)
-        b = evaluate(tkn.right)
+    elif e.op.value == "*":
+        a = evaluate(e.left)
+        b = evaluate(e.right)
         return a * b
-    elif tkn.op.value == "-":
-        a = evaluate(tkn.left)
-        b = evaluate(tkn.right)
+    elif e.op.value == "-":
+        a = evaluate(e.left)
+        b = evaluate(e.right)
         return a - b
-    elif tkn.op.value == "/":
-        a = evaluate(tkn.left)
-        b = evaluate(tkn.right)
+    elif e.op.value == "/":
+        a = evaluate(e.left)
+        b = evaluate(e.right)
         return a / b
-    elif tkn.op.value == "^":
-        b = evaluate(tkn.right)
-        a = evaluate(tkn.left)
+    elif e.op.value == "^":
+        a = evaluate(e.left)
+        b = evaluate(e.right)
         return a ** b
     
-user_input = "START"
-
-while user_input != "":
+while True:
     try:
         user_input = sys.stdin.readline()
     except KeyboardInterrupt:
         print()
         break
-
     if user_input == "":
         continue
-
     input_stream = InputStream(user_input)
+
     parser = Parser(Lexer(input_stream))
 
-    if not DEBUG:
-        try:
-            return_token = parser.parse()
-        except Exception:
+    try:
+        return_token = parser.parse()
+    except Exception as debug:
+        if not DEBUG:
             print("Error: Syntax")
             continue
-    else:
-        # Debug Mode - don't catch exceptions
-        return_token = parser.parse()
+        raise debug
        
     try:
         ans = evaluate(return_token)
-    except ValueError:
-        print("Error: Invalid Value")
     except Exception:
         continue
+    if ans == None:
+        continue
+
+    if ans == math.floor(ans):
+        ans = int(ans)
 
     print("%s" % ans)
