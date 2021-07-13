@@ -10,6 +10,13 @@
 #   program is exited with the command "exit".
 
 #TODO: Throw specific exception in Parser.parse(), etc.
+#TODO: Implement clear command
+#TODO: Implement trigonomic functions
+#TODO: Constants can be case-insensitive
+
+# Features to include in calc5:
+#   - Complex numbers
+#   - Revised rt() function?
 
 import sys, re, math
 
@@ -215,8 +222,9 @@ class Parser():
 
 class Lexer():
     curr = None
-    cmds = ["mem", "print", "exit"]
-    funcs = ["root", "log"]
+    cmds = ["exit", "clear"]
+    funcs = ["rt", "log", "sin", "cos", "tan"]
+    consts = {"PI": 3.1415926, "E": 2.718281}
     
     def __init__(self):
         self.input_stream = None
@@ -244,6 +252,12 @@ class Lexer():
             return True
         else:
             return False
+
+    def is_const(self, substr):
+        if substr in self.consts.keys():
+            return True
+        else:
+            return False
     
     def is_digit(self, c):
         return re.match(r"\d", c)
@@ -253,7 +267,7 @@ class Lexer():
     
     def is_operator(self, c):
         try:
-            "+-*/^".index(c)
+            "+-*×/÷^".index(c)
             return True
         except ValueError:
             return False
@@ -286,7 +300,9 @@ class Lexer():
         
     def read_id(self):
         word = self.read_while(self.is_id)
-        if self.is_cmd(word):
+        if self.is_const(word):
+            return Token("NUMBER", float(consts.get(word)))
+        elif self.is_cmd(word):
             token_type = "COMMAND"
         elif self.is_func(word):
             token_type = "FUNCTION"
@@ -324,6 +340,10 @@ class Lexer():
                 return Token("OP", '/')
         if self.is_operator(c):
             self.input_stream.next()
+            if c == '×':
+                c = '*'
+            elif c == '÷':
+                c = '/'
             return Token("OP", c)
 
     def peek(self):
@@ -383,7 +403,8 @@ class Node:
     
     def _debug_value(self):
         if self.right== None:
-            return "%s (%s)" % (self.op._debug_value(), self.left._debug_value())
+            return "%s (%s)" % (self.op._debug_value(), 
+                             self.left._debug_value())
         return "%s (%s) (%s)" % (self.op._debug_value(), 
                              self.left._debug_value(), 
                              self.right._debug_value())
@@ -392,7 +413,7 @@ def evaluate(e):
     if type(e) is Token:
         if e.token_type == "VAR":
             var_name = e.value
-            if symbol_table[var_name] == None:
+            if symbol_table.get(var_name) == None:
                 symbol_table[var_name] = 0.0
             return symbol_table[var_name]
         else:
@@ -417,20 +438,17 @@ def evaluate(e):
             return math.fabs(a)
     elif e.op.token_type == "FUNCTION":
         a = evaluate(e.right)
-
         if e.op.value == "log":
             if e.left == None:
                 b = 10
             else:
                 b = evaluate(e.left)
-
             return math.log(a, b)
-        elif e.op.value == "root":
+        elif e.op.value == "rt":
             if e.left == None:
                 b = .5
             else:
                 b = 1 / evaluate(e.left)
-
             return a ** b
         else:
             print("Error: " + e.op.value + " recognized, " +
@@ -456,7 +474,7 @@ def evaluate(e):
         a = evaluate(e.left)
         b = evaluate(e.right)
         return a ** b
-    
+
 while True:
     try:
         user_input = sys.stdin.readline()
