@@ -33,24 +33,29 @@ if [ $# -lt 1 ]; then
     show_usage "$PROGNAME: Please specify flashcard set(s) to study." 1
 fi
 
+if [ "$(which bc)" = "" ]; then
+    show_usage "$PROGNAME: bc required to be installed to use script." 2
+fi
+
 # gather all the files containing cards to study
-files="/tmp/cards.$$"
+cards=$(mktemp cards.XXX)
 for i in $@; do
     if [ ! -e $FLASHCARD_DIR/$i ]; then
         show_usage "$PROGNAME: Flashcards not found." 2
     fi
-    tail -n +2 $FLASHCARD_DIR/$i >> $files
+    tail -n +2 $FLASHCARD_DIR/$i >> $cards
 done
 
 # append title to temporary deck
+shuffle=$(mktemp shuffle.XXX)
 if [ $# -eq 1 ]; then
-    head -1 $FLASHCARD_DIR/$1 > /tmp/shuffle.$$
+    head -1 $FLASHCARD_DIR/$1 > $shuffle
 else
-    echo Multiple Flashcards > /tmp/shuffle.$$
+    echo Multiple Flashcards > $shuffle
 fi
 
 # shuffle deck & store in temporary deck
-cat $files | awk \
+cat $cards | awk \
     'BEGIN { RS = "@@"
              FS = "\n"
              num_cards = 0                                              }
@@ -76,23 +81,24 @@ cat $files | awk \
                  print card_titles[i];
                  print card_data[i];
              }                                                          }' \
->> /tmp/shuffle.$$
+>> $shuffle
 
-NUM_CARDS=$(grep -c ^@@ /tmp/shuffle.$$)
+NUM_CARDS=$(grep -c ^@@ $shuffle)
 num_correct=0
 incorrect="no"
 
 # print title of deck
-head -1 /tmp/shuffle.$$
+head -1 $shuffle
 echo
 
+wrong=$(mktemp wrong.XXX)
 i=$NUM_CARDS
 while [ $i -gt 0 ]; do
     # print flashcard title & wait for user to press enter
-    flashcard=`awk 'BEGIN { RS = "@@";
+    flashcard=$(awk 'BEGIN { RS = "@@";
                             FS = "\n"; }
                     NR == ('$NUM_CARDS' - '$i' + 2) { printf "%s", $1 }' \
-               < /tmp/shuffle.$$`
+			    < $shuffle)
     echo -n $flashcard "(Press enter) "
     read cont
     
@@ -103,7 +109,7 @@ while [ $i -gt 0 ]; do
          NR == ('$NUM_CARDS' - '$i' + 2) { for (i = 2; i < NF; ++i) {
                                                print $i
                                            }                          }' \
-         < /tmp/shuffle.$$ | fmt -s -w 80          
+         < $shuffle | fmt -s -w 80          
     
     # ask user if answer is correct (only accept 'y' or 'n')
     err="err"
@@ -122,7 +128,7 @@ while [ $i -gt 0 ]; do
     if [ "$correct" = "correct" ]; then
         num_correct=$(expr $num_correct + 1)
     else
-        echo @@$flashcard >> /tmp/wrong.$$
+        echo @@$flashcard >> $wrong
         incorrect="yes"
     fi
     
@@ -137,7 +143,7 @@ done
 # print titles of flashcards user missed
 if [ "$incorrect" = "yes" ]; then    
     echo Missed Questions:
-    cat /tmp/wrong.$$ | cut -d@ -f 3 | sed "s/^/>> /"
+    cat $wrong | cut -d@ -f 3 | sed "s/^/>> /"
     echo
 fi
 
@@ -146,5 +152,4 @@ PERCENTAGE=$(echo "scale=2; ($num_correct / $NUM_CARDS) * 100" | bc | \
              cut -d. -f 1,1)
 echo Correct: $PERCENTAGE%
 
-touch /tmp/wrong.$$
-rm /tmp/cards.$$ /tmp/shuffle.$$ /tmp/wrong.$$ # clean up
+rm $cards $shuffle $wrong
