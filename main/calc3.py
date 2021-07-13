@@ -10,8 +10,6 @@
 #   program is exited with the command "exit".
 
 #TODO: Throw specific exception in Parser.parse(), etc.
-#TODO: Remind self what exactly happens when "1)+2", etc. is written, figure out
-#      way to handle it more elegantly
 
 import sys, re, math
 
