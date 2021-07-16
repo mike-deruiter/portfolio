@@ -1,23 +1,18 @@
 #!/bin/env python3
 
-# calc3: Cook's Algebraic Calculator, version 3
-#   A simple calculator that allows floating-point arithmetic with variables.
-#   Variables are intialized with the command "load [VAR]". Memory is set
-#   aside for a variable (giving it a default value of 0) with the command
-#   "mem [VAR]". Variables are printed with the command "print [VAR]". The
-#   calculator supports addition/subtraction, muliplication/division,
-#   exponentiation, unary plus & minus, & a square root function. The
-#   program is exited with the command "exit".
+'''
+calc7: Cook's Algebraic Calculator, version 4.1
+  A simple calculator that allows floating-point arithmetic
+  with variables. calc supports addition/subtraction, 
+  multiplication/division, exponentiation, unary plus & 
+  minus, & elementary functions. The program is exited 
+  with the command "exit".
+'''
 
-#TODO: Throw specific exception in Parser.parse(), etc.
-#TODO: Implement clear command
-#TODO: Implement trigonomic functions
-#TODO: Constants can be case-insensitive
-
-# Features to include in calc5:
-#   - Remove Operation class, make type of Token
-#   - Complex numbers
-#   - Revised rt() function?
+# TODO: Throw specific exception in Parser.parse(), etc.
+# TODO: Implement trigonometric functions
+# TODO: Constants can be case-insensitive
+# TODO: Check against precision errors
 
 import sys, re, math
 
@@ -225,7 +220,7 @@ class Lexer():
     curr = None
     cmds = ["exit", "clear"]
     funcs = ["rt", "log", "sin", "cos", "tan"]
-    consts = {"PI": 3.1415926, "E": 2.7182818}
+    consts = {"PI": "3.1415926536", "E": "2.7182818285"}
     
     def __init__(self):
         self.input_stream = None
@@ -297,12 +292,12 @@ class Lexer():
     def read_number(self):
          number = self.read_while(self.is_number)
          self.decimal_pt = False
-         return Token("NUMBER", float(number))
+         return Token("NUMBER", number)
         
     def read_id(self):
         word = self.read_while(self.is_id)
         if self.is_const(word):
-            return Token("NUMBER", float(self.consts.get(word)))
+            return Token("CONST", self.consts.get(word))
         elif self.is_cmd(word):
             token_type = "COMMAND"
         elif self.is_func(word):
@@ -420,13 +415,16 @@ def evaluate(e):
                 print("Error: " + var_name + " recognized, " +
                 "but not implemented.")
                 raise Exception
-        elif e.token_type == "VAR":
+        if e.token_type == "VAR":
             var_name = e.value
             if symbol_table.get(var_name) == None:
                 symbol_table[var_name] = 0.0
             answer = symbol_table[var_name]
+        elif e.token_type == "CONST":
+            answer = float(e.value)
         else:
-            answer = e.value # Returns value of NUMBER tokens
+            answer = float(e.value)
+            # Add logic to check errors here
     # Type of e assumed to be Operation
     elif e.op.token_type == "ASSIGN":
         b = evaluate(e.right)
@@ -484,14 +482,15 @@ def evaluate(e):
 
 while True:
     try:
-        user_input = sys.stdin.readline()
+        user_input = input("> ")
     except KeyboardInterrupt:
         print()
-        break
+        sys.exit()
+
     if user_input == "":
         continue
-    input_stream = InputStream(user_input)
 
+    input_stream = InputStream(user_input)
     parser = Parser(Lexer(input_stream))
 
     try:
@@ -509,4 +508,4 @@ while True:
     if ans == None:
         continue
 
-    print("%s" % ans)
+    print(f"{ans}")
